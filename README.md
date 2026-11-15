@@ -147,9 +147,9 @@ For a new Supabase project:
    (`supabase secrets set PORTFOLIO_SNAPSHOT_SECRET=...`).
 4. In the GitHub repository, set the secrets `VITE_SUPABASE_URL` and
    `VITE_SUPABASE_ANON_KEY` (the build), and in the `supabase` environment,
-   limited to `main`, `SUPABASE_ACCESS_TOKEN` and `SUPABASE_DB_PASSWORD`
-   (applying the migrations and deploying the functions). Set the project ref in
-   the `supabase-deploy` job in `ci.yml`.
+   limited to `main`, `SUPABASE_ACCESS_TOKEN` (applying the migrations and
+   deploying the functions; no database password is needed). Set the project ref
+   in the `supabase-deploy` job in `ci.yml`.
 5. Put the project's URL in `connect-src` in `index.html`. For a copy of the
    site on another domain, also change `SITE_ORIGIN` in
    `supabase/functions/_shared/http.ts`, the only origin the functions answer.
