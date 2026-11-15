@@ -62,7 +62,7 @@ export const getLastMonthDownloads = async (
               kind: 'rate_limited',
               retryAfterSeconds,
               body: rawBody,
-              message: `Rate limited by npm${retryAfterSeconds ? ` — try again in ${retryAfterSeconds}s` : ''}.`
+              message: `Rate limited by npm${retryAfterSeconds ? `. Try again in ${retryAfterSeconds}s` : ''}.`
             });
           }
 

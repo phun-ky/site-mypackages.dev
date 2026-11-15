@@ -23,7 +23,7 @@ export const getGitHubRepoRef = (
   if (sshMatch)
     return { owner: sshMatch[1], repo: sanitizeRepoName(sshMatch[2]) };
 
-  // Normalize git+ prefix
+  // Normalise git+ prefix
   const cleaned = raw.replace(/^git\+/i, '');
 
   // Try URL parsing (https://, ssh://, git://)

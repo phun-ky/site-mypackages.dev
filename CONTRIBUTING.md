@@ -86,6 +86,11 @@ database tests. The commands are in the [README](README.md#checks).
   reach everything; `npm run lint` checks it.
 - **Write for people:** plain words in the interface, the docs and the commit
   messages, and say what a number means and where it comes from.
+- **British English** (colour, behaviour, licence as a noun, -ise endings) in
+  the interface, docs, comments and commits. Names an API or a tool defines keep
+  their spelling (`color` in CSS, npm's `license` field).
+- **No en or em dashes:** use a hyphen, a colon or a comma, or restructure the
+  sentence; `npm run lint` checks it.
 
 ### Developer Certificate of Origin
 

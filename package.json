@@ -19,7 +19,7 @@
     "dev": "vite",
     "build": "tsc -p tsconfig.build.json && vite build",
     "preview": "vite preview",
-    "lint": "eslint . --max-warnings 0 && node scripts/check-colours.mjs",
+    "lint": "eslint . --max-warnings 0 && node scripts/check-colours.mjs && node scripts/check-dashes.mjs",
     "format:check": "prettier --check .",
     "bestpractices:url": "node scripts/bestpractices-url.mjs",
     "check:bestpractices": "node scripts/check-bestpractices.mjs",

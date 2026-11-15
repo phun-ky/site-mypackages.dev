@@ -80,17 +80,17 @@ answers every request with mocks.
 
 ### Checks
 
-| Command                       | What it checks                                                                |
-| ----------------------------- | ----------------------------------------------------------------------------- |
-| `npm run lint`                | ESLint with no warnings allowed, and that styles only use colour tokens       |
-| `npm run format:check`        | Prettier                                                                      |
-| `npm run typecheck`           | TypeScript, for the source and the tests                                      |
-| `npm run test:unit`           | Unit and property tests (`tests/unit`)                                        |
-| `npm run test:coverage`       | The unit tests with coverage thresholds                                       |
-| `npm run test:e2e`            | Builds with `.env.e2e`, then the Playwright tests in Chromium                 |
-| `npm run build`               | The production build                                                          |
-| `npm run check:metadata`      | Titles, descriptions, link previews and the sitemap in `dist/`, after a build |
-| `npm run check:bestpractices` | That every link in `.bestpractices.json` and `security-insights.yml` resolves |
+| Command                       | What it checks                                                                     |
+| ----------------------------- | ---------------------------------------------------------------------------------- |
+| `npm run lint`                | ESLint with no warnings allowed, styles only use colour tokens, no en or em dashes |
+| `npm run format:check`        | Prettier                                                                           |
+| `npm run typecheck`           | TypeScript, for the source and the tests                                           |
+| `npm run test:unit`           | Unit and property tests (`tests/unit`)                                             |
+| `npm run test:coverage`       | The unit tests with coverage thresholds                                            |
+| `npm run test:e2e`            | Builds with `.env.e2e`, then the Playwright tests in Chromium                      |
+| `npm run build`               | The production build                                                               |
+| `npm run check:metadata`      | Titles, descriptions, link previews and the sitemap in `dist/`, after a build      |
+| `npm run check:bestpractices` | That every link in `.bestpractices.json` and `security-insights.yml` resolves      |
 
 `npm run bestpractices:url -- --level passing` prints
 [bestpractices.dev](https://www.bestpractices.dev/projects/16089) links that

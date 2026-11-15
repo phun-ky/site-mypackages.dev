@@ -24,7 +24,7 @@ const PAGES = [
   '/users/phun-ky/packages',
   '/this-does-not-exist'
 ];
-// A rendered page serializes differently from the source: an uppercase
+// A rendered page serialises differently from the source: an uppercase
 // doctype, `crossorigin=""` and the templates' whitespace. Style attributes
 // are allowed by the CSP on purpose (bar widths, charts).
 const validator = new HtmlValidate(new FileSystemConfigLoader());

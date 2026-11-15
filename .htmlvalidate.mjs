@@ -4,7 +4,7 @@ export default {
   rules: {
     // Both `<meta>` and `<meta />` are valid. Prettier writes the second in
     // index.html, Vite injects its stylesheet with the first, and a rendered
-    // page serializes with the first
+    // page serialises with the first
     'void-style': 'off',
     // Prettier writes the doctype in lowercase
     'doctype-style': ['error', { style: 'lowercase' }]

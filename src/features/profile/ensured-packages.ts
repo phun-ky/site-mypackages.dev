@@ -133,7 +133,7 @@ const cloneNewEntryRow = (template: HTMLElement) => {
 };
 
 /**
- * Mount ensured packages behavior inside the profile page.
+ * Mount ensured packages behaviour inside the profile page.
  * Call this AFTER the ProfilePage HTML has been inserted into the DOM.
  */
 export const mountEnsuredPackages = async (
