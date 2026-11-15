@@ -285,13 +285,18 @@ None of these has an issue yet; they're listed under
 [considered, not scheduled](ROADMAP.md#considered-not-scheduled) in the roadmap,
 and each starts with an issue when it's picked up.
 
-- [ ] Watchlists / pin packages
-- [ ] Notes + tags
-- [ ] Alerts (threshold based)
-- [ ] Cross-registry sources (GitHub/Azure/JFrog/Sonatype)
-- [ ] Better security scoring + advisory details (backend proxy + caching)
-- [ ] Saved searches + shareable searches
-- [ ] “Compare packages” view
+- [ ] Watchlists / pin packages:
+      [watchlists](ROADMAP.md#considered-not-scheduled)
+- [ ] Notes + tags: [watchlists](ROADMAP.md#considered-not-scheduled)
+- [ ] Alerts (threshold based): [alerts](ROADMAP.md#considered-not-scheduled)
+- [ ] Cross-registry sources (GitHub/Azure/JFrog/Sonatype):
+      [other registries](ROADMAP.md#considered-not-scheduled)
+- [ ] Better security scoring + advisory details (backend proxy + caching):
+      [advisory details](ROADMAP.md#considered-not-scheduled)
+- [ ] Saved searches + shareable searches:
+      [saved and shareable searches](ROADMAP.md#considered-not-scheduled)
+- [ ] “Compare packages” view:
+      [comparing packages](ROADMAP.md#considered-not-scheduled)
 
 ### ideas
 
