@@ -34,13 +34,13 @@ const readPolicy = async (page: Page) => {
   );
 };
 const sourceFiles = (dir: string): string[] =>
-  readdirSync(dir, { withFileTypes: true }).flatMap((entry) =>
-    entry.isDirectory()
-      ? sourceFiles(join(dir, entry.name))
-      : entry.name.endsWith('.ts')
-        ? [join(dir, entry.name)]
-        : []
-  );
+  readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const path = join(dir, entry.name);
+
+    if (entry.isDirectory()) return sourceFiles(path);
+
+    return entry.name.endsWith('.ts') ? [path] : [];
+  });
 
 test.beforeEach(async ({ page }) => {
   await mockPackages(page, { '@phun-ky/speccer': {} });

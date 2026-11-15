@@ -21,6 +21,16 @@ export type Health = {
   };
 };
 
+const labelForScore = (score: number) => {
+  if (score >= 85) return 'Excellent';
+
+  if (score >= 70) return 'Good';
+
+  if (score >= 50) return 'OK';
+
+  return 'Poor';
+};
+
 export const packageHealth = (args: {
   maintenance?: HealthMetric;
   popularity?: HealthMetric;
@@ -113,14 +123,7 @@ export const packageHealth = (args: {
 
   score = clamp(Math.round(score), 0, 100);
 
-  const label =
-    score >= 85
-      ? 'Excellent'
-      : score >= 70
-        ? 'Good'
-        : score >= 50
-          ? 'OK'
-          : 'Poor';
+  const label = labelForScore(score);
   // Confidence: how many metrics we had, weighted by importance
   const confidencePct = Math.round(weightSum * 100);
   const weighted: Record<string, number> = {};

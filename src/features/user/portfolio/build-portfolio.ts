@@ -94,6 +94,11 @@ export const buildPortfolio = (
     const health = pkg.releaseHealth;
     const lastPublishMs = health?.lastPublishMs ?? null;
 
+    // From npm's search, until the downloads for each month are in
+    let monthly = downloads.monthly;
+
+    if (summary) monthly = month ? (totals[month] ?? 0) : 0;
+
     return {
       name: pkg.name,
       description: typeof pkg.description === 'string' ? pkg.description : '',
@@ -101,7 +106,7 @@ export const buildPortfolio = (
         health?.latestVersion ??
         (typeof pkg.version === 'string' ? pkg.version : null),
       keywords: Array.isArray(pkg.keywords) ? pkg.keywords : [],
-      monthly: summary ? (month ? (totals[month] ?? 0) : 0) : downloads.monthly,
+      monthly,
       // No downloads in any complete month, but some since: published this
       // month, so there's nothing to compare with yet
       change:

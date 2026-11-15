@@ -23,6 +23,12 @@ export type PopularityResult = {
 
 const cap = DOWNLOAD_COUNT_UPPER_THRESHOLD * 50; // tweak as you like
 const log = (x: number) => Math.log10(Math.max(1, x));
+// From nothing to something counts as 100%, so it's never Infinity
+const changeFrom = (prev: number, current: number) => {
+  if (prev > 0) return ((current - prev) / prev) * 100;
+
+  return current === 0 ? 0 : 100;
+};
 
 /**
  * Maps downloads into a 0–100 score.
@@ -80,7 +86,7 @@ export const packagePopularity = (
     const prev = Math.max(0, previousDownloads);
 
     // If prev is 0, define change in a stable way (avoid Infinity)
-    changePct = prev === 0 ? (d === 0 ? 0 : 100) : ((d - prev) / prev) * 100;
+    changePct = changeFrom(prev, d);
 
     changePct = Math.round(changePct * 10) / 10;
   }

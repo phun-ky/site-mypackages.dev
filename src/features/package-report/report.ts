@@ -164,32 +164,43 @@ export const signalRows = (
   return rows.filter((row): row is SignalRow => row !== null);
 };
 
+// Parts of the verdict, by signal key
+const USE: Readonly<Record<string, string>> = Object.freeze({
+  decent: 'Widely used',
+  'relative-low': 'Used by some'
+});
+const CARE: Readonly<Record<string, string>> = Object.freeze({
+  deprecated: 'deprecated',
+  dormant: 'no longer released',
+  stale: 'not released in a while',
+  fresh: 'actively maintained',
+  stable: 'actively maintained'
+});
+// Object.hasOwn, so a key like "constructor" doesn't read Object.prototype
+const pick = (table: Readonly<Record<string, string>>, key?: string) => {
+  if (key === undefined || !Object.hasOwn(table, key)) return undefined;
+
+  return table[key];
+};
+const safetyOf = (security?: SecurityResult) => {
+  if (!security || security.key === 'unknown') {
+    return 'vulnerabilities not checked';
+  }
+
+  const n = vulnCount(security);
+
+  if (n === 0) return 'no known vulnerabilities';
+
+  return `${n} known ${n === 1 ? 'vulnerability' : 'vulnerabilities'}`;
+};
+
 /** One sentence that sums the signals up */
 export const verdict = (signals: Signals, dependencies: number) => {
   const { security, maintenance, popularity, provenance } = signals;
-  const use =
-    popularity?.key === 'decent'
-      ? 'Widely used'
-      : popularity?.key === 'relative-low'
-        ? 'Used by some'
-        : 'Not widely used yet';
+  const use = pick(USE, popularity?.key) ?? 'Not widely used yet';
   const care =
-    maintenance?.key === 'deprecated'
-      ? 'deprecated'
-      : maintenance?.key === 'dormant'
-        ? 'no longer released'
-        : maintenance?.key === 'stale'
-          ? 'not released in a while'
-          : maintenance?.key === 'fresh' || maintenance?.key === 'stable'
-            ? 'actively maintained'
-            : 'with an unknown release history';
-  const n = vulnCount(security);
-  const safety =
-    security?.key === 'unknown' || !security
-      ? 'vulnerabilities not checked'
-      : n === 0
-        ? 'no known vulnerabilities'
-        : `${n} known ${n === 1 ? 'vulnerability' : 'vulnerabilities'}`;
+    pick(CARE, maintenance?.key) ?? 'with an unknown release history';
+  const safety = safetyOf(security);
   const deps =
     dependencies === 0
       ? 'no runtime dependencies'

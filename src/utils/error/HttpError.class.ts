@@ -1,6 +1,16 @@
 export type HttpErrorKind =
   'rate_limited' | 'upstream' | 'client' | 'network' | 'unknown';
 
+const kindForStatus = (status: number): HttpErrorKind => {
+  if (status === 429) return 'rate_limited';
+
+  if (status >= 500) return 'upstream';
+
+  if (status >= 400) return 'client';
+
+  return 'unknown';
+};
+
 export class HttpError extends Error {
   public readonly name = 'HttpError';
 
@@ -20,15 +30,7 @@ export class HttpError extends Error {
 
     this.body = options?.body;
     this.retryAfterSeconds = options?.retryAfterSeconds;
-    this.kind =
-      options?.kind ??
-      (status === 429
-        ? 'rate_limited'
-        : status >= 500
-          ? 'upstream'
-          : status >= 400
-            ? 'client'
-            : 'unknown');
+    this.kind = options?.kind ?? kindForStatus(status);
   }
 
   public readonly body?: string;
