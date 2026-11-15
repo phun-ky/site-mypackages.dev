@@ -160,6 +160,9 @@ stores about people is in the [privacy notice](PRIVACY.md).
 
 - **Framing:** GitHub Pages can't send headers, and a `<meta>` CSP can't set
   `frame-ancestors`, so the site can be framed by another site.
+- **No other security headers:** GitHub Pages can't send `Permissions-Policy`,
+  `X-Content-Type-Options` or `Strict-Transport-Security`. It redirects HTTP to
+  HTTPS, but browsers aren't told to stay on HTTPS.
 - **No rate limit of its own** on the edge functions; npm's limits are the only
   limit.
 - **Inline styles are allowed** (`style-src-attr 'unsafe-inline'`), because the

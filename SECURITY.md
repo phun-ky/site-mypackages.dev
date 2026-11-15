@@ -71,11 +71,14 @@ What you can rely on:
 
 What you can't rely on yet:
 
-- **A complete Content Security Policy.** GitHub Pages can't send headers, so
-  the policy is a `<meta>` tag, which can't set `frame-ancestors` (the site can
-  be framed) or reporting. It allows scripts only from the site, but inline
-  `style` attributes are allowed, because the templates set them (bar widths and
-  the like).
+- **Security headers.** GitHub Pages sends none, and a site on it can't set any,
+  so the Content Security Policy and the referrer policy are `<meta>` tags. A
+  `<meta>` policy can't set `frame-ancestors` (the site can be framed) or
+  reporting. It allows scripts only from the site, but inline `style` attributes
+  are allowed, because the templates set them (bar widths and the like).
+  `Permissions-Policy`, `X-Content-Type-Options` and `Strict-Transport-Security`
+  can't be set at all: GitHub Pages redirects HTTP to HTTPS, but browsers aren't
+  told to stay on HTTPS.
 - **Availability.** The site depends on npm's public API and its rate limits.
   There is no rate limit of its own on the edge functions.
 
