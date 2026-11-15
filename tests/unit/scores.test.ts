@@ -36,6 +36,26 @@ describe('scoreRecency', () => {
       })
     );
   });
+
+  // Each step and its edges, so coverage doesn't depend on which ages the
+  // property above happens to draw
+  test('steps down at 14, 60, 180 and 365 days', () => {
+    const steps: [ageDays: number, score: number][] = [
+      [0, 100],
+      [14, 100],
+      [15, 90],
+      [60, 90],
+      [61, 60],
+      [180, 60],
+      [181, 35],
+      [365, 35],
+      [366, 15]
+    ];
+
+    for (const [ageDays, score] of steps) {
+      assert.equal(scoreRecency(ageDays), score, `${ageDays} days`);
+    }
+  });
 });
 
 describe('scoreCadence', () => {
@@ -54,6 +74,32 @@ describe('scoreCadence', () => {
         }
       )
     );
+  });
+
+  // Each step and its edges, so coverage doesn't depend on which cadences the
+  // property above happens to draw
+  test('steps down at 7, 14, 30, 60 and 120 days', () => {
+    const steps: [cadenceDays: number, score: number][] = [
+      [1, 95],
+      [7, 95],
+      [8, 90],
+      [14, 90],
+      [15, 80],
+      [30, 80],
+      [31, 65],
+      [60, 65],
+      [61, 50],
+      [120, 50],
+      [121, 35]
+    ];
+
+    for (const [cadenceDays, score] of steps) {
+      assert.equal(
+        scoreCadence(cadenceDays * DAY_MS),
+        score,
+        `${cadenceDays} days`
+      );
+    }
   });
 
   test('is neutral when the cadence is unknown', () => {
@@ -146,5 +192,40 @@ describe('packageHealth', () => {
     });
 
     assert.ok(health.scorePct <= 55);
+  });
+
+  test('caps a package to watch at 75', () => {
+    const health = packageHealth({
+      maintenance: { scorePct: 100 },
+      quality: { scorePct: 100 },
+      popularity: { scorePct: 100 },
+      security: { scorePct: 50 },
+      provenance: { scorePct: 100 }
+    });
+
+    assert.equal(health.scorePct, 75);
+    assert.equal(health.label, 'Good');
+  });
+
+  // With one metric, the score is that metric's. Random metrics are mostly
+  // clamped to 0 or 100, so the labels in between are tested here.
+  test('labels scores at 85, 70 and 50', () => {
+    const labels: [scorePct: number, label: string][] = [
+      [100, 'Excellent'],
+      [85, 'Excellent'],
+      [84, 'Good'],
+      [70, 'Good'],
+      [69, 'OK'],
+      [50, 'OK'],
+      [49, 'Poor'],
+      [0, 'Poor']
+    ];
+
+    for (const [scorePct, label] of labels) {
+      const health = packageHealth({ quality: { scorePct } });
+
+      assert.equal(health.scorePct, scorePct);
+      assert.equal(health.label, label, `score ${scorePct}`);
+    }
   });
 });
