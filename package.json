@@ -43,8 +43,8 @@
     "@axe-core/playwright": "^4.14.0",
     "@playwright/test": "^1.65.0",
     "@types/node": "^24.19.2",
-    "eslint": "^10.14.0",
-    "eslint-config-phun-ky": "^2.0.10",
+    "eslint": "^10.15.0",
+    "eslint-config-phun-ky": "^3.0.0",
     "fast-check": "^4.10.2",
     "git-cz": "^4.9.0",
     "globals": "^17.14.0",
@@ -64,6 +64,9 @@
   "overrides": {
     "micromark-extension-math": {
       "katex": "^0.18.2"
+    },
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "^11.0.1"
     }
   }
 }
