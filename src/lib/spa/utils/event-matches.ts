@@ -3,7 +3,7 @@ export const eventMatches = (
   selector: string
 ): HTMLElement | undefined => {
   // <svg> in IE does not have `Element#msMatchesSelector()` (that should be copied to `Element#matches()` by a polyfill).
-  // Also a weird behavior is seen in IE where DOM tree seems broken when `event.target` is on <svg>.
+  // Also a weird behaviour is seen in IE where DOM tree seems broken when `event.target` is on <svg>.
   // Therefore this function simply returns `undefined` when `event.target` is on <svg>.
   const { target, currentTarget } = event;
 

@@ -66,7 +66,7 @@ const existsGitHubNpmPackage = async (
   if (!parts) return false;
 
   const { scope: org, name } = parts;
-  // GitHub REST: Get a package for an organization
+  // GitHub REST: get a package for an organisation
   // GET /orgs/{org}/packages/{package_type}/{package_name}
   // We try "npm" as package_type for GitHub Packages (npm registry).
   const url = `https://api.github.com/orgs/${encodeURIComponent(

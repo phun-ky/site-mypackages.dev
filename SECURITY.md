@@ -71,11 +71,14 @@ What you can rely on:
 
 What you can't rely on yet:
 
-- **A complete Content Security Policy.** GitHub Pages can't send headers, so
-  the policy is a `<meta>` tag, which can't set `frame-ancestors` (the site can
-  be framed) or reporting. It allows scripts only from the site, but inline
-  `style` attributes are allowed, because the templates set them (bar widths and
-  the like).
+- **Security headers.** GitHub Pages sends none, and a site on it can't set any,
+  so the Content Security Policy and the referrer policy are `<meta>` tags. A
+  `<meta>` policy can't set `frame-ancestors` (the site can be framed) or
+  reporting. It allows scripts only from the site, but inline `style` attributes
+  are allowed, because the templates set them (bar widths and the like).
+  `Permissions-Policy`, `X-Content-Type-Options` and `Strict-Transport-Security`
+  can't be set at all: GitHub Pages redirects HTTP to HTTPS, but browsers aren't
+  told to stay on HTTPS.
 - **Availability.** The site depends on npm's public API and its rate limits.
   There is no rate limit of its own on the edge functions.
 
@@ -123,9 +126,9 @@ The project keeps as few secrets as possible:
 
 | Secret                      | Kept in                                      | Used by                               | For                                                         |
 | --------------------------- | -------------------------------------------- | ------------------------------------- | ----------------------------------------------------------- |
-| `VITE_SUPABASE_URL`         | GitHub Actions secret                        | `deploy.yml`                          | The project's address, built into the site (public)         |
-| `VITE_SUPABASE_ANON_KEY`    | GitHub Actions secret                        | `deploy.yml`                          | The public anon key, built into the site (public by design) |
-| `SUPABASE_ACCESS_TOKEN`     | The `supabase` environment, `main` only      | `supabase.yml`                        | Deploying the edge functions                                |
+| `VITE_SUPABASE_URL`         | GitHub Actions secret                        | `ci.yml`, the Pages build job         | The project's address, built into the site (public)         |
+| `VITE_SUPABASE_ANON_KEY`    | GitHub Actions secret                        | `ci.yml`, the Pages build job         | The public anon key, built into the site (public by design) |
+| `SUPABASE_ACCESS_TOKEN`     | The `supabase` environment, `main` only      | `ci.yml`, the Supabase deploy job     | Applying the migrations and deploying the edge functions    |
 | `PORTFOLIO_SNAPSHOT_SECRET` | Supabase function secrets and Supabase Vault | `portfolio-snapshot` and its cron job | Letting only the cron job compute the example portfolio     |
 | Service role key            | Supabase, given to the functions             | The edge functions                    | Reading stored tokens for the user a function has verified  |
 

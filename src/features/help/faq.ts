@@ -134,7 +134,7 @@ export const FAQ_TOPICS: FAQTopic[] = [
 <ul>
   <li><strong>Security:</strong> based on vulnerabilities fetched from OSV for the package and version. If they can't be fetched, Security is "Unknown" with a score of 50.</li>
   <li><strong>Maintenance:</strong> combines how recently it was published (65%) and how regularly it's released (35%). It can get a small boost for stable, heavily used packages, and a penalty if very old. Deprecated packages score 5.</li>
-  <li><strong>Quality:</strong> from package metadata like types, tests, exports, ESM, the Node engines field, license, repository and README size. Deprecated packages score 5.</li>
+  <li><strong>Quality:</strong> from package metadata like types, tests, exports, ESM, the Node engines field, licence, repository and README size. Deprecated packages score 5.</li>
   <li><strong>Provenance:</strong> from the dist metadata (integrity, signatures, attestations and the SLSA predicate type). It checks that they're present, not that they verify.</li>
   <li><strong>Popularity:</strong> from monthly downloads, using thresholds and log scaling at the high end, so huge numbers don't instantly pin it at 100.</li>
 </ul>

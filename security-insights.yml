@@ -56,8 +56,8 @@ repository:
       - uri: https://mypackages.dev
         comment: |
           The website, deployed to GitHub Pages from main by
-          .github/workflows/deploy.yml on every merge. There are no versions
-          or packages.
+          .github/workflows/ci.yml on every merge, once every check has
+          passed. There are no versions or packages.
   security:
     assessments:
       self:

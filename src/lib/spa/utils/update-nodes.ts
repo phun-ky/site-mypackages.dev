@@ -12,7 +12,7 @@ import { DiffDOM, nodeToObj } from 'diff-dom';
  *
  * The function uses the third-party library `diff-dom` to compare
  * the old DOM nodes with the new DOM nodes and apply any changes,
- * simulating the behavior of modern JS frameworks like React.
+ * simulating the behaviour of modern JS frameworks like React.
  * The `updateNodes` function does not return anything (returns `void`).
  *
  *

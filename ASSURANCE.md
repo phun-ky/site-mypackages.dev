@@ -49,8 +49,9 @@ stores about people is in the [privacy notice](PRIVACY.md).
    and row level security, not by the site's code.
 2. **Browser to edge functions.** The functions check the session themselves,
    and are the only code with the service role key, which reads Vault.
-3. **Repository to production.** Only GitHub Actions on `main` deploy the site
-   and the functions; migrations are applied by the maintainer.
+3. **Repository to production.** Only GitHub Actions on `main` apply the
+   migrations and deploy the functions and the site, after every check has
+   passed.
 
 ## Controls
 
@@ -159,6 +160,9 @@ stores about people is in the [privacy notice](PRIVACY.md).
 
 - **Framing:** GitHub Pages can't send headers, and a `<meta>` CSP can't set
   `frame-ancestors`, so the site can be framed by another site.
+- **No other security headers:** GitHub Pages can't send `Permissions-Policy`,
+  `X-Content-Type-Options` or `Strict-Transport-Security`. It redirects HTTP to
+  HTTPS, but browsers aren't told to stay on HTTPS.
 - **No rate limit of its own** on the edge functions; npm's limits are the only
   limit.
 - **Inline styles are allowed** (`style-src-attr 'unsafe-inline'`), because the

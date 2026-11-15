@@ -12,6 +12,11 @@ updates:
           - 'patch'
     schedule:
       interval: 'weekly'
+    # Only propose versions published at least 14 days ago: a compromised
+    # release is usually caught within days. Security updates still open at
+    # once.
+    cooldown:
+      default-days: 14
     labels:
       - 'mindless: 📦 dependencies'
     commit-message:
@@ -38,8 +43,13 @@ updates:
           - 'patch'
     schedule:
       interval: 'weekly'
+    # Only propose versions published at least 14 days ago: a compromised
+    # release is usually caught within days. Security updates still open at
+    # once.
+    cooldown:
+      default-days: 14
+    # The labeler adds section: workflows for changes to the workflows
     labels:
       - 'mindless: 📦 dependencies'
-      - 'section: workflows'
     commit-message:
       prefix: 'ci: 🎡 '

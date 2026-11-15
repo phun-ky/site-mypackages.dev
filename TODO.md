@@ -1,4 +1,4 @@
-# TODO — Pages, Routes, and Content (v1 → v2)
+# TODO: Pages, Routes, and Content (v1 → v2)
 
 > Planning notes from before the Nebula, refined redesign
 > ([#47](https://github.com/phun-ky/site-mypackages.dev/issues/47)), kept for
@@ -20,15 +20,15 @@
 
 ## Routes (proposed)
 
-- `/` — StartPage (public)
-- `/packages` — PackagesPage (public) [Explorer/Search results]
-- `/packages/:packageName` — PackagePage (public) [Canonical package page]
-- `/users` — UsersPage (public) [Explorer/Search results for identities]
-- `/users/:username` — UserPage (public) [Profile/Overview]
-- `/users/:username/packages` — UserPackagesPage (public) [Full package list for
+- `/`: StartPage (public)
+- `/packages`: PackagesPage (public) [Explorer/Search results]
+- `/packages/:packageName`: PackagePage (public) [Canonical package page]
+- `/users`: UsersPage (public) [Explorer/Search results for identities]
+- `/users/:username`: UserPage (public) [Profile/Overview]
+- `/users/:username/packages`: UserPackagesPage (public) [Full package list for
   identity]
-- `/dashboard` — DashboardPage (private) [Logged-in workspace/portfolio]
-- `/about` — AboutPage (public)
+- `/dashboard`: DashboardPage (private) [Logged-in workspace/portfolio]
+- `/about`: AboutPage (public)
 
 Notes:
 
@@ -81,7 +81,7 @@ Content (v1):
 Nice-to-have (v2):
 
 - Facets:
-  - License, has types, deprecated, security risk, stale/dormant, keyword
+  - Licence, has types, deprecated, security risk, stale/dormant, keyword
 - Saved searches (login)
 
 ---
@@ -93,7 +93,7 @@ Purpose: deep view into one package.
 Top section (v1):
 
 - Header:
-  - Package name, version, license, repo link, registry link
+  - Package name, version, licence, repo link, registry link
   - Badges: overall health, security, maintenance, quality, popularity
 - KPI row:
   - Monthly downloads (last 30d or last complete month)
@@ -109,7 +109,7 @@ Main content (v1):
 - Health breakdown cards:
   - Security card: risk/ok + summary + counts (if available)
   - Maintenance card: stale/dormant/fresh + score + change
-  - Quality card: types/tests/exports/engines/license/repo/readme
+  - Quality card: types/tests/exports/engines/licence/repo/readme
   - Popularity card: score + change + label
 
 Secondary content (v1):
@@ -199,7 +199,7 @@ Nice-to-have (v2):
 
 ---
 
-### DashboardPage (`/dashboard`) — private
+### DashboardPage (`/dashboard`), private
 
 Purpose: “my portfolio over time” + actions.
 
@@ -269,7 +269,7 @@ Future (private features on public pages):
 - [x] PackagePage:
   - [x] downloads (monthly + chart)
   - [x] health breakdown (maintenance/popularity/quality/security)
-  - [x] metadata panel (repo, license, maintainers, keywords)
+  - [x] metadata panel (repo, licence, maintainers, keywords)
 - [x] UserPage:
   - [x] aggregate totals + top packages
 - [x] UserPackagesPage list + sort
@@ -285,13 +285,18 @@ None of these has an issue yet; they're listed under
 [considered, not scheduled](ROADMAP.md#considered-not-scheduled) in the roadmap,
 and each starts with an issue when it's picked up.
 
-- [ ] Watchlists / pin packages
-- [ ] Notes + tags
-- [ ] Alerts (threshold based)
-- [ ] Cross-registry sources (GitHub/Azure/JFrog/Sonatype)
-- [ ] Better security scoring + advisory details (backend proxy + caching)
-- [ ] Saved searches + shareable searches
-- [ ] “Compare packages” view
+- [ ] Watchlists / pin packages:
+      [watchlists](ROADMAP.md#considered-not-scheduled)
+- [ ] Notes + tags: [watchlists](ROADMAP.md#considered-not-scheduled)
+- [ ] Alerts (threshold based): [alerts](ROADMAP.md#considered-not-scheduled)
+- [ ] Cross-registry sources (GitHub/Azure/JFrog/Sonatype):
+      [other registries](ROADMAP.md#considered-not-scheduled)
+- [ ] Better security scoring + advisory details (backend proxy + caching):
+      [advisory details](ROADMAP.md#considered-not-scheduled)
+- [ ] Saved searches + shareable searches:
+      [saved and shareable searches](ROADMAP.md#considered-not-scheduled)
+- [ ] “Compare packages” view:
+      [comparing packages](ROADMAP.md#considered-not-scheduled)
 
 ### ideas
 
