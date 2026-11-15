@@ -5,6 +5,7 @@ import type { NpmRegistryPackument, NpmPackageName } from '../../types';
 import { HttpError } from '../../utils/error/HttpError.class';
 import { cachedAsync } from '../../utils/storage/cached-async';
 
+import { networkErrorMessage } from './network-error-message';
 import { trimPackument } from './trim-packument';
 
 const registryCache = new Map();
@@ -76,12 +77,7 @@ export const getPackageDetails = async (
       if (e instanceof HttpError) throw e;
 
       const url = `npm-package-details:${name}`;
-      const message =
-        e instanceof Error
-          ? e.message
-          : typeof e === 'string'
-            ? e
-            : 'Network error';
+      const message = networkErrorMessage(e);
 
       throw new HttpError(0, url, {
         kind: 'network',

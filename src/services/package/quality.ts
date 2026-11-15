@@ -48,6 +48,31 @@ const hasTestDeps = (deps?: Record<string, string>) => {
     ].includes(k)
   );
 };
+const QUALITY_LABELS: Readonly<Record<QualityKey, QualityLabel>> =
+  Object.freeze({
+    unknown: 'Unknown',
+    poor: 'Poor',
+    ok: 'OK',
+    good: 'Good',
+    excellent: 'Excellent'
+  });
+const keyForScore = (score: number): QualityKey => {
+  if (score >= 85) return 'excellent';
+
+  if (score >= 70) return 'good';
+
+  if (score >= 50) return 'ok';
+
+  return 'poor';
+};
+// A README long enough to explain the package
+const readmePoints = (chars: number) => {
+  if (chars > 500) return 8;
+
+  if (chars > 200) return 4;
+
+  return 0;
+};
 
 export const packageQuality = (details: PackageDetails): QualityResult => {
   const rh = details.releaseHealth;
@@ -66,10 +91,8 @@ export const packageQuality = (details: PackageDetails): QualityResult => {
     const base =
       (hasLicense ? 10 : 0) + (hasRepo ? 10 : 0) + (readmeChars > 200 ? 10 : 0);
     const scorePct = clamp(40 + base, 0, 100);
-    const key: QualityKey =
-      scorePct >= 70 ? 'good' : scorePct >= 50 ? 'ok' : 'poor';
-    const label: QualityLabel =
-      key === 'good' ? 'Good' : key === 'ok' ? 'OK' : 'Poor';
+    const key = keyForScore(scorePct);
+    const label = QUALITY_LABELS[key];
 
     return {
       key,
@@ -116,7 +139,7 @@ export const packageQuality = (details: PackageDetails): QualityResult => {
 
   score += hasLicense ? 7 : 0;
   score += hasRepo ? 7 : 0;
-  score += readmeChars > 500 ? 8 : readmeChars > 200 ? 4 : 0;
+  score += readmePoints(readmeChars);
 
   const hasEntrypoint =
     Boolean(latestMeta.main) ||
@@ -128,22 +151,8 @@ export const packageQuality = (details: PackageDetails): QualityResult => {
 
   score = clamp(Math.round(score), 0, 100);
 
-  const key: QualityKey =
-    score >= 85
-      ? 'excellent'
-      : score >= 70
-        ? 'good'
-        : score >= 50
-          ? 'ok'
-          : 'poor';
-  const label: QualityLabel =
-    key === 'excellent'
-      ? 'Excellent'
-      : key === 'good'
-        ? 'Good'
-        : key === 'ok'
-          ? 'OK'
-          : 'Poor';
+  const key = keyForScore(score);
+  const label = QUALITY_LABELS[key];
   const titleParts = [
     hasTypes ? 'Types' : 'No types',
     hasTests ? 'Tests' : 'No tests',

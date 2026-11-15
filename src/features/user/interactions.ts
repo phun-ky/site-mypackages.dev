@@ -74,12 +74,9 @@ const sortRows = (key: string) => {
 
   // Names go A to Z first, numbers from the highest; a second click flips it
   const first = key === 'name' ? 'ascending' : 'descending';
+  const flipped = first === 'ascending' ? 'descending' : 'ascending';
   const direction =
-    header.getAttribute('aria-sort') === first
-      ? first === 'ascending'
-        ? 'descending'
-        : 'ascending'
-      : first;
+    header.getAttribute('aria-sort') === first ? flipped : first;
   const sign = direction === 'ascending' ? 1 : -1;
   const value = (row: HTMLTableRowElement) => row.dataset[key] ?? '';
   const sorted = rows().sort((a, b) => {

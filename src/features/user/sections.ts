@@ -35,8 +35,11 @@ export const formatChange = (pct: number | null) =>
     ? 'new'
     : `${pct >= 0 ? '▲' : '▼'} ${Math.abs(pct).toFixed(1)}%`;
 
-const changeClass = (pct: number | null) =>
-  pct === null ? 'is-flat' : pct >= 0 ? 'is-up' : 'is-down';
+const changeClass = (pct: number | null) => {
+  if (pct === null) return 'is-flat';
+
+  return pct >= 0 ? 'is-up' : 'is-down';
+};
 
 export const ago = (ms: number | null, now: number) => {
   if (ms === null) return 'never';

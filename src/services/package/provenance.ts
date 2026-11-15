@@ -32,6 +32,16 @@ export type ProvenanceResult = {
   };
 };
 
+const presentTitle = (hasSignatures: boolean, hasAttestations: boolean) => {
+  if (hasSignatures && hasAttestations) {
+    return 'Signatures and attestations present (not verified)';
+  }
+
+  if (hasSignatures) return 'Signatures present (not verified)';
+
+  return 'Attestations present (not verified)';
+};
+
 /**
  * Browser-friendly provenance score based on *presence* (not cryptographic verification yet).
  * You can later upgrade this to "verified" once you implement signature/attestation verification.
@@ -104,12 +114,7 @@ export const packageProvenance = (dist?: NpmDist | null): ProvenanceResult => {
   } else if (sigCount > 0 || hasAttestations) {
     key = 'present';
     label = 'Present';
-    title =
-      sigCount > 0 && hasAttestations
-        ? 'Signatures and attestations present (not verified)'
-        : sigCount > 0
-          ? 'Signatures present (not verified)'
-          : 'Attestations present (not verified)';
+    title = presentTitle(sigCount > 0, hasAttestations);
   }
 
   return {

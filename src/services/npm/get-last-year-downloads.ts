@@ -5,6 +5,8 @@ import type { NpmPackageName } from '../../types';
 import { HttpError } from '../../utils/error/HttpError.class';
 import { cachedAsync } from '../../utils/storage/cached-async';
 
+import { networkErrorMessage } from './network-error-message';
+
 const downloadLastYearHistoryCache = new Map();
 
 export type LastYearRangeResponse = {
@@ -88,12 +90,7 @@ export const getLastYearDownloads = async (
         if (e instanceof HttpError) throw e;
 
         const url = `npm-downloads-last-year:${name}`;
-        const message =
-          e instanceof Error
-            ? e.message
-            : typeof e === 'string'
-              ? e
-              : 'Network error';
+        const message = networkErrorMessage(e);
 
         throw new HttpError(0, url, {
           kind: 'network',

@@ -19,6 +19,8 @@ export default defineConfig([
     // Agree with Prettier, which uses double quotes to avoid escapes and
     // indents object types in unions one level deeper
     rules: {
+      // Use an early return, an if or a small function instead (#156)
+      'no-nested-ternary': 'error',
       '@stylistic/quotes': ['warn', 'single', { avoidEscape: true }],
       '@stylistic/indent': [
         'error',
