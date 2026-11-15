@@ -125,7 +125,7 @@ The project keeps as few secrets as possible:
 | --------------------------- | -------------------------------------------- | ------------------------------------- | ----------------------------------------------------------- |
 | `VITE_SUPABASE_URL`         | GitHub Actions secret                        | `ci.yml`, the Pages build job         | The project's address, built into the site (public)         |
 | `VITE_SUPABASE_ANON_KEY`    | GitHub Actions secret                        | `ci.yml`, the Pages build job         | The public anon key, built into the site (public by design) |
-| `SUPABASE_ACCESS_TOKEN`     | The `supabase` environment, `main` only      | `supabase.yml`                        | Deploying the edge functions                                |
+| `SUPABASE_ACCESS_TOKEN`     | The `supabase` environment, `main` only      | `ci.yml`, the Supabase deploy job     | Applying the migrations and deploying the edge functions    |
 | `PORTFOLIO_SNAPSHOT_SECRET` | Supabase function secrets and Supabase Vault | `portfolio-snapshot` and its cron job | Letting only the cron job compute the example portfolio     |
 | Service role key            | Supabase, given to the functions             | The edge functions                    | Reading stored tokens for the user a function has verified  |
 

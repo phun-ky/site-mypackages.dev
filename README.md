@@ -121,15 +121,16 @@ the design or the copy, and commit the files.
 
 There are no versions, tags or changelog: **every merge to `main` deploys.**
 
-- **The site** is built and published to GitHub Pages by the last jobs in
-  [`ci.yml`](.github/workflows/ci.yml), once every check has passed, with every
-  static route written as its own page. Package and user pages are served from
-  `404.html` (with status 404), which starts the app.
-- **The edge functions** are deployed by
-  [`supabase.yml`](.github/workflows/supabase.yml) when `supabase/functions`
-  changes.
-- **Database migrations** in `supabase/migrations` are applied by the maintainer
-  with `supabase db push`, before or with the site change that needs them.
+The last jobs in [`ci.yml`](.github/workflows/ci.yml) deploy, once every check
+has passed, in this order:
+
+1. **Database migrations** in `supabase/migrations` are applied to the Supabase
+   project with `supabase db push`. Only new migrations are applied; the push
+   fails if the project has one that `supabase/migrations` doesn't.
+2. **The edge functions** in `supabase/functions` are deployed.
+3. **The site** is built and published to GitHub Pages, with every static route
+   written as its own page. Package and user pages are served from `404.html`
+   (with status 404), which starts the app.
 
 ## Supabase setup
 
@@ -145,8 +146,10 @@ For a new Supabase project:
    function secret `PORTFOLIO_SNAPSHOT_SECRET`
    (`supabase secrets set PORTFOLIO_SNAPSHOT_SECRET=...`).
 4. In the GitHub repository, set the secrets `VITE_SUPABASE_URL` and
-   `VITE_SUPABASE_ANON_KEY` (the build) and `SUPABASE_ACCESS_TOKEN` (deploying
-   the functions), and the project ref in `supabase.yml`.
+   `VITE_SUPABASE_ANON_KEY` (the build), and in the `supabase` environment,
+   limited to `main`, `SUPABASE_ACCESS_TOKEN` (applying the migrations and
+   deploying the functions; no database password is needed). Set the project ref
+   in the `supabase-deploy` job in `ci.yml`.
 5. Put the project's URL in `connect-src` in `index.html`. For a copy of the
    site on another domain, also change `SITE_ORIGIN` in
    `supabase/functions/_shared/http.ts`, the only origin the functions answer.
