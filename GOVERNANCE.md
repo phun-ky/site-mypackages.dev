@@ -19,18 +19,19 @@ Decisions are made in public:
   recorded in the issue.
 - **Changes** are made as pull requests, reviewed by the maintainer, and merged
   only when the required checks pass.
-- **Releases** don't exist as such: every merge to `main` deploys the site, and
-  the edge functions when they change. There are no versions, tags or changelog;
-  the history of `main` and the closed issues are the record.
+- **Releases** don't exist as such: every merge to `main` applies new database
+  migrations and deploys the edge functions and the site, once the checks pass.
+  There are no versions, tags or changelog; the history of `main` and the closed
+  issues are the record.
 - **Disagreements** are resolved by discussion in the issue or pull request. If
   that doesn't settle it, the maintainer decides and explains why.
 
 ## Roles
 
-| Role            | Who                                                                        | Responsibilities                                                                                                                                                                                     |
-| --------------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Maintainer**  | Alexander Vassbotn Røyne-Helgesen ([@phun-ky](https://github.com/phun-ky)) | Sets the direction and roadmap; triages issues; reviews and merges pull requests; applies database migrations; handles security reports; manages the repository, the Supabase project and the domain |
-| **Contributor** | Anyone who opens an issue or a pull request                                | Follows the [contributing guide](CONTRIBUTING.md); includes tests with code changes; signs off every commit                                                                                          |
+| Role            | Who                                                                        | Responsibilities                                                                                                                                                        |
+| --------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Maintainer**  | Alexander Vassbotn Røyne-Helgesen ([@phun-ky](https://github.com/phun-ky)) | Sets the direction and roadmap; triages issues; reviews and merges pull requests; handles security reports; manages the repository, the Supabase project and the domain |
+| **Contributor** | Anyone who opens an issue or a pull request                                | Follows the [contributing guide](CONTRIBUTING.md); includes tests with code changes; signs off every commit                                                             |
 
 ### Becoming a maintainer
 
