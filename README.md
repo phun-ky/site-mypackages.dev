@@ -121,10 +121,10 @@ the design or the copy, and commit the files.
 
 There are no versions, tags or changelog: **every merge to `main` deploys.**
 
-- **The site** is built by [`deploy.yml`](.github/workflows/deploy.yml) and
-  published to GitHub Pages, with every static route written as its own page.
-  Package and user pages are served from `404.html` (with status 404), which
-  starts the app.
+- **The site** is built and published to GitHub Pages by the last jobs in
+  [`ci.yml`](.github/workflows/ci.yml), once every check has passed, with every
+  static route written as its own page. Package and user pages are served from
+  `404.html` (with status 404), which starts the app.
 - **The edge functions** are deployed by
   [`supabase.yml`](.github/workflows/supabase.yml) when `supabase/functions`
   changes.
