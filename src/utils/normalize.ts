@@ -139,7 +139,7 @@ export const normalizeAzureDevOpsRepoUrl = (
     return undefined;
   }
 
-  // Normalize to https for the remaining forms
+  // Normalise to https for the remaining forms
   url = url
     .replace(/^git:\/\//, 'https://')
     .replace(/^ssh:\/\/git@/, 'https://')

@@ -18,7 +18,7 @@ export type MaintenanceResult = {
   /** Tooltip / helper text */
   title: string;
 
-  /** 0–100 score (for progress/ring) */
+  /** 0 to 100 score (for progress/ring) */
   scorePct: number;
 
   /**

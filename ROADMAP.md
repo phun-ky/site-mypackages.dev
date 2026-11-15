@@ -55,6 +55,9 @@ Ideas that fit the site but have no date. Each would start with an issue.
 
 ## Not planned
 
+- **Preview deploys** of pull requests. GitHub Pages can't host them; this is
+  looked at again with the hosting decision in
+  [#77](https://github.com/phun-ky/site-mypackages.dev/issues/77).
 - **Versions, tags or a changelog.** Every merge to `main` deploys; the site has
   one version, the one at <https://mypackages.dev>.
 - **Packages someone "authored".** npm records the latest publisher as the

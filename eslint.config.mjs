@@ -40,11 +40,6 @@ export default defineConfig([
     }
   },
   {
-    // The shared config ignores tests/, but the e2e tests are code we
-    // maintain, so lint them too
-    ignores: ['!tests/**']
-  },
-  {
     // GitHub renders these, so parse task lists and tables like it does
     files: ['**/*.md'],
     language: 'markdown/gfm'

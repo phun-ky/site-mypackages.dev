@@ -12,7 +12,7 @@ export type PopularityResult = {
   key: PopularityKey;
   title: string;
   label: Popularity;
-  /** 0–100 normalized “how popular” score */
+  /** 0 to 100 normalised “how popular” score */
   scorePct: number;
   /**
    * Percentage change vs previous period, e.g. 12.3 means +12.3%.
@@ -31,7 +31,7 @@ const changeFrom = (prev: number, current: number) => {
 };
 
 /**
- * Maps downloads into a 0–100 score.
+ * Maps downloads into a 0 to 100 score.
  * - 0..threshold => 0..33
  * - threshold..upper => 33..66
  * - upper..infinity => 66..100 (asymptotically, via log scaling)

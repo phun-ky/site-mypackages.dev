@@ -103,7 +103,7 @@ export const packageQuality = (details: PackageDetails): QualityResult => {
     };
   }
 
-  // Deprecated: prefer normalized boolean, but keep message if present
+  // Deprecated: prefer normalised boolean, but keep message if present
   const deprecatedMsg =
     typeof latestMeta.deprecated === 'string'
       ? latestMeta.deprecated.trim()

@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 jobs:
-  triage:
+  label:
     # Runs on pull_request_target, so it never checks out or runs code from the
     # pull request: the labeler reads .github/labeler.yml from the base branch
     # through the API

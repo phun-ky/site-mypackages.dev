@@ -80,17 +80,17 @@ answers every request with mocks.
 
 ### Checks
 
-| Command                       | What it checks                                                                |
-| ----------------------------- | ----------------------------------------------------------------------------- |
-| `npm run lint`                | ESLint with no warnings allowed, and that styles only use colour tokens       |
-| `npm run format:check`        | Prettier                                                                      |
-| `npm run typecheck`           | TypeScript, for the source and the tests                                      |
-| `npm run test:unit`           | Unit and property tests (`tests/unit`)                                        |
-| `npm run test:coverage`       | The unit tests with coverage thresholds                                       |
-| `npm run test:e2e`            | Builds with `.env.e2e`, then the Playwright tests in Chromium                 |
-| `npm run build`               | The production build                                                          |
-| `npm run check:metadata`      | Titles, descriptions, link previews and the sitemap in `dist/`, after a build |
-| `npm run check:bestpractices` | That every link in `.bestpractices.json` and `security-insights.yml` resolves |
+| Command                       | What it checks                                                                     |
+| ----------------------------- | ---------------------------------------------------------------------------------- |
+| `npm run lint`                | ESLint with no warnings allowed, styles only use colour tokens, no en or em dashes |
+| `npm run format:check`        | Prettier                                                                           |
+| `npm run typecheck`           | TypeScript, for the source and the tests                                           |
+| `npm run test:unit`           | Unit and property tests (`tests/unit`)                                             |
+| `npm run test:coverage`       | The unit tests with coverage thresholds                                            |
+| `npm run test:e2e`            | Builds with `.env.e2e`, then the Playwright tests in Chromium                      |
+| `npm run build`               | The production build                                                               |
+| `npm run check:metadata`      | Titles, descriptions, link previews and the sitemap in `dist/`, after a build      |
+| `npm run check:bestpractices` | That every link in `.bestpractices.json` and `security-insights.yml` resolves      |
 
 `npm run bestpractices:url -- --level passing` prints
 [bestpractices.dev](https://www.bestpractices.dev/projects/16089) links that
@@ -121,15 +121,16 @@ the design or the copy, and commit the files.
 
 There are no versions, tags or changelog: **every merge to `main` deploys.**
 
-- **The site** is built by [`deploy.yml`](.github/workflows/deploy.yml) and
-  published to GitHub Pages, with every static route written as its own page.
-  Package and user pages are served from `404.html` (with status 404), which
-  starts the app.
-- **The edge functions** are deployed by
-  [`supabase.yml`](.github/workflows/supabase.yml) when `supabase/functions`
-  changes.
-- **Database migrations** in `supabase/migrations` are applied by the maintainer
-  with `supabase db push`, before or with the site change that needs them.
+The last jobs in [`ci.yml`](.github/workflows/ci.yml) deploy, once every check
+has passed, in this order:
+
+1. **Database migrations** in `supabase/migrations` are applied to the Supabase
+   project with `supabase db push`. Only new migrations are applied; the push
+   fails if the project has one that `supabase/migrations` doesn't.
+2. **The edge functions** in `supabase/functions` are deployed.
+3. **The site** is built and published to GitHub Pages, with every static route
+   written as its own page. Package and user pages are served from `404.html`
+   (with status 404), which starts the app.
 
 ## Supabase setup
 
@@ -145,8 +146,10 @@ For a new Supabase project:
    function secret `PORTFOLIO_SNAPSHOT_SECRET`
    (`supabase secrets set PORTFOLIO_SNAPSHOT_SECRET=...`).
 4. In the GitHub repository, set the secrets `VITE_SUPABASE_URL` and
-   `VITE_SUPABASE_ANON_KEY` (the build) and `SUPABASE_ACCESS_TOKEN` (deploying
-   the functions), and the project ref in `supabase.yml`.
+   `VITE_SUPABASE_ANON_KEY` (the build), and in the `supabase` environment,
+   limited to `main`, `SUPABASE_ACCESS_TOKEN` (applying the migrations and
+   deploying the functions; no database password is needed). Set the project ref
+   in the `supabase-deploy` job in `ci.yml`.
 5. Put the project's URL in `connect-src` in `index.html`. For a copy of the
    site on another domain, also change `SITE_ORIGIN` in
    `supabase/functions/_shared/http.ts`, the only origin the functions answer.

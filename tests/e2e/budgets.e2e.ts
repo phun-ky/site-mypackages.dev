@@ -27,7 +27,13 @@ const BUDGETS = {
       cls: 0.1,
       tbtMs: 550
     }
-  }
+  },
+  // Interaction to Next Paint, per interaction, on the same phone without
+  // network throttling. Measured 2026-11-15 (6 runs): theme switch 0-32 ms,
+  // typing in the search 24-40 ms, opening a package from the search 16-32
+  // ms (Event Timing rounds to 8 ms, and leaves out anything under 16 ms).
+  // 100 ms is about 2.5 times the slowest, and half Google's "good" limit.
+  inpMs: { theme: 100, typing: 100, search: 100 }
 } as const;
 
 test.skip(
@@ -150,3 +156,77 @@ for (const [path, budget] of Object.entries(BUDGETS.pages)) {
     expect(metrics.tbtMs, 'TBT, ms').toBeLessThanOrEqual(budget.tbtMs);
   });
 }
+
+// Interaction to Next Paint for the main interactions, on the same slow
+// phone: the longest Event Timing entry each interaction makes, which is its
+// INP when a visit has fewer than 50 interactions
+test('interactions respond within budget on a slow phone', async ({ page }) => {
+  const cdp = await page.context().newCDPSession(page);
+
+  await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
+  await page.setViewportSize({ width: 412, height: 823 });
+  await page.addInitScript(() => {
+    const w = window as unknown as { __events: number[][] };
+    // durationThreshold is in Event Timing, but not yet in TypeScript's DOM
+    // types, which only check it in an object literal passed directly
+    const options = { type: 'event', buffered: true, durationThreshold: 16 };
+
+    w.__events = [];
+    new PerformanceObserver((list) => {
+      for (const entry of list.getEntries() as PerformanceEntry[] &
+        { interactionId: number }[]) {
+        if (entry.interactionId > 0) {
+          w.__events.push([entry.interactionId, entry.duration]);
+        }
+      }
+    }).observe(options);
+  });
+  await page.goto('/');
+  await waitForApp(page);
+
+  // The longest interaction since the last call
+  let seen = 0;
+
+  const longest = async () => {
+    // Event Timing reports an interaction after its next paint
+    await page.evaluate(
+      () => new Promise((done) => requestAnimationFrame(() => setTimeout(done)))
+    );
+
+    const events = await page.evaluate(
+      () => (window as unknown as { __events: number[][] }).__events
+    );
+    const durations = events.slice(seen).map(([, duration]) => duration);
+
+    seen = events.length;
+
+    return Math.max(0, ...durations);
+  };
+  const search = page.getByRole('searchbox', {
+    name: 'Package or npm username'
+  });
+  const measured: Record<string, number> = {};
+
+  await page.locator('#theme-toggle').click();
+  measured.theme = await longest();
+
+  await search.pressSequentially('speccer');
+  measured.typing = await longest();
+
+  await page.getByRole('button', { name: 'Show me' }).click();
+  await expect(
+    page.getByRole('heading', { level: 1, name: /speccer/ })
+  ).toBeVisible();
+  measured.search = await longest();
+
+  test.info().annotations.push({
+    type: 'inp',
+    description: Object.entries(measured)
+      .map(([name, ms]) => `${name} ${ms.toFixed(0)} ms`)
+      .join(', ')
+  });
+
+  for (const [name, budget] of Object.entries(BUDGETS.inpMs)) {
+    expect(measured[name], `INP of ${name}, ms`).toBeLessThanOrEqual(budget);
+  }
+});
