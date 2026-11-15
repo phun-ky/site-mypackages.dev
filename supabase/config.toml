@@ -1,5 +1,5 @@
 # Supabase project for mypackages.dev. The edge functions in functions/ are
-# deployed from here by .github/workflows/supabase.yml, so change them here,
+# deployed from here by .github/workflows/ci.yml, so change them here,
 # not in the Supabase dashboard: the next deploy overwrites dashboard edits.
 #
 # Only what deploys need is set. Anything else falls back to the CLI defaults,
