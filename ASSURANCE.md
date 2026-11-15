@@ -49,8 +49,9 @@ stores about people is in the [privacy notice](PRIVACY.md).
    and row level security, not by the site's code.
 2. **Browser to edge functions.** The functions check the session themselves,
    and are the only code with the service role key, which reads Vault.
-3. **Repository to production.** Only GitHub Actions on `main` deploy the site
-   and the functions; migrations are applied by the maintainer.
+3. **Repository to production.** Only GitHub Actions on `main` apply the
+   migrations and deploy the functions and the site, after every check has
+   passed.
 
 ## Controls
 
