@@ -67,7 +67,7 @@ export const packageHealth = (args: {
     };
   }
 
-  // Re-normalize weights for missing metrics
+  // Re-normalise weights for missing metrics
   const weightSum = parts.reduce((s, p) => s + p.weight, 0);
   const normalized = parts.map((p) => ({ ...p, weight: p.weight / weightSum }));
 

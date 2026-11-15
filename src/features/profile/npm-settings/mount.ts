@@ -47,7 +47,7 @@ export const mountNpmSettings = async (
     .maybeSingle();
 
   // Note: supabase-js doesn't currently accept AbortSignal per query in a standard way.
-  // If you need hard aborts, use fetch customization at client creation.
+  // If you need hard aborts, use fetch customisation at client creation.
 
   if (error) {
     // If row doesn’t exist yet, that’s fine.
