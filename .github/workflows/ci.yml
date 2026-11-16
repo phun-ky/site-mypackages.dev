@@ -193,6 +193,28 @@ jobs:
     needs: [lint, build, unit, e2e, functions, database]
     runs-on: ubuntu-24.04
     steps:
+      # Every commit in the pull request, so commits made without the
+      # commit-msg hook are refused too (#166). The full history, so the
+      # base commit is there to compare with.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: github.event_name == 'pull_request'
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Reject AI attribution in the commits
+        if: github.event_name == 'pull_request'
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          status=0
+          for commit in $(git rev-list "$BASE..$HEAD"); do
+            if ! git log -1 --format=%B "$commit" | .githooks/ai-attribution; then
+              echo "::error::AI attribution in commit $commit"
+              status=1
+            fi
+          done
+          exit "$status"
       - name: Check that all jobs passed
         env:
           FAILED:

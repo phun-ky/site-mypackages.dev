@@ -1,0 +1,5 @@
+#!/bin/sh
+# Refuse a commit whose message has AI attribution (#166). The patterns are in
+# .githooks/ai-attribution, which CI also runs. Enabled by `npm ci`, see the
+# prepare script.
+exec "$(dirname "$0")/ai-attribution" "$1"
