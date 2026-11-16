@@ -49,7 +49,7 @@ export const FAQ_TOPICS: FAQTopic[] = [
       {
         question: 'What data sources do you use?',
         answer:
-          '<p>We primarily use npm registry data for package metadata and downloads, OSV for known vulnerabilities, and GitHub data for repository-level signals when a package has a valid repository URL.</p>'
+          "<p>We primarily use npm registry data for package metadata and downloads, OSV for known vulnerabilities, GitHub data for repository-level signals when a package has a valid repository URL, and bestpractices.dev for the repository's OpenSSF Best Practices badge.</p>"
       }
     ]
   },
@@ -139,6 +139,11 @@ export const FAQ_TOPICS: FAQTopic[] = [
   <li><strong>Popularity:</strong> from monthly downloads, using thresholds and log scaling at the high end, so huge numbers don't instantly pin it at 100.</li>
 </ul>
 <p>On a package page, each score is shown with the reason behind it, next to the overall score with the caps applied.</p>`
+      },
+      {
+        question: 'What does the OpenSSF chip on a package page mean?',
+        answer:
+          '<p>The package\'s repository has an <a href="https://www.bestpractices.dev/" target="_blank" rel="noopener noreferrer">OpenSSF Best Practices</a> badge: <strong>Passing</strong>, <strong>Silver</strong> or <strong>Gold</strong>, or <strong>In progress</strong> with the share of the passing criteria met. The maintainers fill in the criteria themselves, so it\'s a self-assessment of the whole repository, not a check of the published version.</p><p>It\'s shown next to the health score, not counted in it, since few projects are registered. Packages whose repository isn\'t registered get no chip.</p>'
       },
       {
         question: 'What does "confidence" mean in package health?',

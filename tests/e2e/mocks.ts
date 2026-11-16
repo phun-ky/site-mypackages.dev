@@ -34,6 +34,8 @@ export const mockPackages = async (
     exists: exists(packageName)
   }));
   await mockJson(page, 'https://api.osv.dev/v1/query', { vulns: [] });
+  // Not registered; a test registers a project with its own route
+  await mockJson(page, 'https://www.bestpractices.dev/projects.json*', []);
   await mockJson(page, 'https://api.github.com/repos/**', {
     stargazers_count: 42,
     forks_count: 1,

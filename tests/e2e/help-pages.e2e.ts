@@ -49,7 +49,7 @@ test.describe('questions and answers', () => {
     const doc = page.locator('.help-doc');
 
     await expect(doc.getByRole('heading', { level: 2 })).toHaveCount(6);
-    await expect(doc.getByRole('heading', { level: 3 })).toHaveCount(23);
+    await expect(doc.getByRole('heading', { level: 3 })).toHaveCount(24);
     // The old page showed `I&#39;ve` and `&quot;authored&quot;` (#64)
     await expect(
       doc.getByRole('heading', {
@@ -180,7 +180,7 @@ test.describe('help', () => {
       cards.getByRole('link', { name: /Questions and answers/ })
     ).toHaveAttribute('href', '/help/faq');
     await expect(
-      page.getByRole('link', { name: 'Package health 4' })
+      page.getByRole('link', { name: 'Package health 5' })
     ).toHaveAttribute('href', '/help/faq#package-health');
   });
 });

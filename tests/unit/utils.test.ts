@@ -3,6 +3,8 @@ import * as fc from 'fast-check';
 import assert from 'node:assert/strict';
 import { describe, test } from 'node:test';
 
+import { DEFAULT_OPTIONS, isConfigKey } from '../../src/config';
+import { isAbort, toDateMs, uniqueStrings } from '../../src/utils';
 import { calcMoMChangePct } from '../../src/utils/calc-mom-change-pct';
 import { clamp } from '../../src/utils/clamp';
 import { escapeAttr, escapeHtml, safeUrl } from '../../src/utils/escape-html';
@@ -141,5 +143,27 @@ describe('calcMoMChangePct', () => {
     assert.equal(calcMoMChangePct(months(4)), undefined);
     assert.equal(calcMoMChangePct(months(0, 0)), 0);
     assert.equal(calcMoMChangePct(months(0, 7)), 100);
+  });
+});
+
+describe('small helpers', () => {
+  test('uniqueStrings drops duplicates and empty strings', () => {
+    assert.deepEqual(uniqueStrings(['a', '', 'b', 'a']), ['a', 'b']);
+  });
+
+  test('toDateMs reads a date, or gives null', () => {
+    assert.equal(toDateMs('2026-01-01T00:00:00Z'), 1767225600000);
+    assert.equal(toDateMs(''), null);
+    assert.equal(toDateMs('not a date'), null);
+  });
+
+  test('isAbort only matches an AbortError', () => {
+    assert.equal(isAbort(new DOMException('x', 'AbortError')), true);
+    assert.equal(isAbort(new Error('x')), false);
+  });
+
+  test('isConfigKey only matches the config keys', () => {
+    assert.equal(isConfigKey('locale', DEFAULT_OPTIONS), true);
+    assert.equal(isConfigKey('nope', DEFAULT_OPTIONS), false);
   });
 });

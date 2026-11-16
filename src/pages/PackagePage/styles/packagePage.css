@@ -140,6 +140,14 @@
     color: rgb(var(--rgb-down));
   }
 
+  &.is-openssf {
+    border-color: rgb(var(--rgb-brand) / 0.45);
+
+    a {
+      color: rgb(var(--rgb-brand));
+    }
+  }
+
   &.is-latest {
     padding: 0 0.5rem;
     font-size: 0.72rem;

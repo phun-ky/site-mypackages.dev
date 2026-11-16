@@ -8,5 +8,6 @@ export const ALLOWED_ORIGINS = [
   'https://gitlab.com',
   'https://api.bitbucket.org',
   'https://dev.azure.com',
-  'https://api.osv.dev'
+  'https://api.osv.dev',
+  'https://www.bestpractices.dev'
 ];
