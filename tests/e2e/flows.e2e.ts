@@ -1,6 +1,12 @@
 import type { Page } from '@playwright/test';
 
-import { expect, mockSupabaseTable, test, waitForApp } from './fixtures';
+import {
+  expect,
+  mockJson,
+  mockSupabaseTable,
+  test,
+  waitForApp
+} from './fixtures';
 import { mockPackages, mockUser } from './mocks';
 
 test.beforeEach(async ({ page }) => {
@@ -233,6 +239,52 @@ test.describe('OpenSSF Best Practices', () => {
 
     await expect(chips(page)).toContainText('v1.0.0');
     await expect(chips(page)).not.toContainText('OpenSSF');
+  });
+});
+
+test.describe('used by', () => {
+  const section = (page: Page) => page.getByRole('region', { name: 'Used by' });
+
+  test('lists the most downloaded dependents, linked to their reports', async ({
+    page
+  }) => {
+    const api =
+      'https://packages.ecosyste.ms/api/v1/registries/npmjs.org/packages';
+
+    await mockJson(page, `${api}/*`, {
+      dependent_packages_count: 1200,
+      dependent_repos_count: 1
+    });
+    await mockJson(page, `${api}/*/dependent_packages*`, [
+      { name: '@phun-ky/speccer' },
+      { name: '@everything-registry/sub-chunk-1' }
+    ]);
+    await page.goto('/packages/speccer');
+    await waitForApp(page);
+
+    await expect(section(page)).toContainText(
+      '1.2K packages on npm depend on it, and 1 repository.'
+    );
+    await expect(section(page).getByRole('listitem')).toHaveCount(1);
+    await expect(
+      section(page).getByRole('link', { name: '@phun-ky/speccer' })
+    ).toHaveAttribute('href', '/packages/@phun-ky/speccer');
+    await expect(
+      section(page).getByRole('link', { name: 'All of them on ecosyste.ms' })
+    ).toHaveAttribute(
+      'href',
+      'https://packages.ecosyste.ms/registries/npmjs.org/packages/speccer/dependent_packages'
+    );
+  });
+
+  test('says when no packages depend on it', async ({ page }) => {
+    await page.goto('/packages/speccer');
+    await waitForApp(page);
+
+    await expect(section(page)).toContainText(
+      'No packages on npm depend on it yet.'
+    );
+    await expect(section(page).getByRole('link')).toHaveCount(0);
   });
 });
 

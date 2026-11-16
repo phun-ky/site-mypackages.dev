@@ -9,5 +9,6 @@ export const ALLOWED_ORIGINS = [
   'https://api.bitbucket.org',
   'https://dev.azure.com',
   'https://api.osv.dev',
-  'https://www.bestpractices.dev'
+  'https://www.bestpractices.dev',
+  'https://packages.ecosyste.ms'
 ];

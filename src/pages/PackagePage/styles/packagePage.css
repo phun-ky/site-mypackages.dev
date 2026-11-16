@@ -514,6 +514,11 @@ img.report-avatar {
       border-color: rgb(var(--rgb-brand) / 0.5);
     }
   }
+
+  /* "All of them on ecosyste.ms" under the Used by list */
+  & + .report-how {
+    margin-top: 0.75rem;
+  }
 }
 
 @media (max-width: 760px) {

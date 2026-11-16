@@ -36,6 +36,17 @@ export const mockPackages = async (
   await mockJson(page, 'https://api.osv.dev/v1/query', { vulns: [] });
   // Not registered; a test registers a project with its own route
   await mockJson(page, 'https://www.bestpractices.dev/projects.json*', []);
+  // No dependents; a test adds some with its own route
+  await mockJson(
+    page,
+    'https://packages.ecosyste.ms/api/v1/registries/npmjs.org/packages/*',
+    { dependent_packages_count: 0, dependent_repos_count: 0 }
+  );
+  await mockJson(
+    page,
+    'https://packages.ecosyste.ms/api/v1/registries/npmjs.org/packages/*/dependent_packages*',
+    []
+  );
   await mockJson(page, 'https://api.github.com/repos/**', {
     stargazers_count: 42,
     forks_count: 1,

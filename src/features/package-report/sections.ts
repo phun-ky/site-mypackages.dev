@@ -5,6 +5,7 @@ import {
   type BestPracticesResult
 } from '../../services/package/best-practices';
 import type { Health } from '../../services/package/health';
+import { usedByUrl, type UsedBy } from '../../services/package/used-by';
 import { dayName, monthName } from '../../utils/downloads';
 import { escapeAttr, escapeHtml } from '../../utils/escape-html';
 
@@ -49,6 +50,8 @@ export type ReportData = {
   openIssues: number | null;
   stars: number | null;
   keywords: string[];
+  /** null when it couldn't be fetched */
+  usedBy: UsedBy | null;
 };
 
 const compact = new Intl.NumberFormat('en-US', {
@@ -230,6 +233,39 @@ export const needs = (d: ReportData) => {
   <h2 id="needs-title">What it needs</h2>
   <p class="report-lead">Before you add it to a project</p>
   <ul class="needs">${[deps, runtime, size].map(([title, sub]) => `<li class="report-card"><strong>${escapeHtml(title)}</strong><span>${escapeHtml(sub)}</span></li>`).join('')}</ul>
+</section>`;
+};
+
+const usedByLead = (u: UsedBy | null) => {
+  if (!u) return "The packages that depend on it couldn't be fetched.";
+
+  if (u.packages === 0) return 'No packages on npm depend on it yet.';
+
+  const repos = u.repos
+    ? `, and ${compact.format(u.repos)} ${u.repos === 1 ? 'repository' : 'repositories'}`
+    : '';
+
+  return `${compact.format(u.packages)} ${u.packages === 1 ? 'package' : 'packages'} on npm ${u.packages === 1 ? 'depends' : 'depend'} on it${repos}.`;
+};
+
+export const usedBy = (d: ReportData) => {
+  const u = d.usedBy;
+  const names = (u?.names ?? [])
+    .map(
+      (name) =>
+        `<li><a href="/packages/${escapeAttr(name)}" data-link>${escapeHtml(name)}</a></li>`
+    )
+    .join('');
+  const all =
+    u && u.packages > u.names.length
+      ? `<p class="report-how"><a href="${escapeAttr(usedByUrl(d.name))}" target="_blank" rel="noopener noreferrer">All of them on ecosyste.ms</a></p>`
+      : '';
+
+  return `<section class="report-section" aria-labelledby="used-by-title">
+  <h2 id="used-by-title">Used by</h2>
+  <p class="report-lead">${usedByLead(u)}</p>
+  ${names ? `<ul class="report-keywords" aria-label="The most downloaded packages that depend on it">${names}</ul>` : ''}
+  ${all}
 </section>`;
 };
 

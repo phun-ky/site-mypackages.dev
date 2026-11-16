@@ -49,7 +49,7 @@ export const FAQ_TOPICS: FAQTopic[] = [
       {
         question: 'What data sources do you use?',
         answer:
-          "<p>We primarily use npm registry data for package metadata and downloads, OSV for known vulnerabilities, GitHub data for repository-level signals when a package has a valid repository URL, and bestpractices.dev for the repository's OpenSSF Best Practices badge.</p>"
+          "<p>We primarily use npm registry data for package metadata and downloads, OSV for known vulnerabilities, GitHub data for repository-level signals when a package has a valid repository URL, bestpractices.dev for the repository's OpenSSF Best Practices badge, and ecosyste.ms for the packages that depend on it.</p>"
       }
     ]
   },
