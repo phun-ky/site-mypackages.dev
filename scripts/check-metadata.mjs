@@ -1,5 +1,6 @@
-// Check the built site's metadata (#40): every page has a title, a
-// description, Open Graph tags and either a canonical URL or noindex; no two
+// Check the built site's metadata (#40): every page is declared British
+// English (#165), and has a title, a description, Open Graph tags and either a
+// canonical URL or noindex; no two
 // indexed pages share a title or canonical URL; every sitemap URL is a page
 // in dist/, and robots.txt points at the sitemap. Run after `vite build`.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
@@ -10,6 +11,7 @@ const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const DIST = join(ROOT, 'dist');
 const ORIGIN = 'https://mypackages.dev';
 const REQUIRED = [
+  /<html lang="en-GB">/,
   /<title>[^<]+<\/title>/,
   /<meta name="description" content="[^"]+"/,
   /<meta property="og:title" content="[^"]+"/,
