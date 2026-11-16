@@ -50,7 +50,7 @@ npm ci
 ```
 
 `npm ci` also sets `core.hooksPath` to `.githooks`, which adds your sign-off to
-every commit (see below).
+every commit and refuses AI attribution (see below).
 
 ### Tests are required
 
@@ -122,5 +122,9 @@ Commit messages follow
   it, and what deploying it means (the site, the edge functions or a migration).
 - **Pull requests are merged with a merge commit**, so each commit stays as
   written. Keep a fix and unrelated tooling in separate commits.
+- **No AI attribution:** no `Co-Authored-By` trailer naming an AI tool, no
+  "Generated with" line, and nothing saying a change was written by AI, in
+  commits, pull requests or issues. The `commit-msg` hook and the `check` status
+  refuse such commits; the patterns are in `.githooks/ai-attribution`.
 
 Every merge to `main` deploys; see [how it deploys](README.md#how-it-deploys).

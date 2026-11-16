@@ -1,0 +1,20 @@
+#!/bin/sh
+# Reject AI attribution in a commit message (#166): a Co-Authored-By trailer
+# naming an AI tool, a "Generated with" line, or "written by AI" and the like.
+# The one place for these patterns: .githooks/commit-msg runs it on every
+# commit, and the check job in .github/workflows/ci.yml on every commit in a
+# pull request. Reads the message from the file given, or from stdin, and
+# exits 1 with the lines that match.
+#
+# Case-insensitive extended regular expressions, one per line. "Generated
+# with" counts only at the start of a line (after an emoji or a bullet), so a
+# subject such as "types generated with TypeDoc" passes.
+PATTERNS='^[[:space:]]*co-authored-by:.*(claude|anthropic|copilot|openai|chatgpt|gpt-[0-9]|gemini|cursor|codeium|windsurf|aider|codex|tabnine|codewhisperer|devin-ai)
+^[^[:alnum:]]*generated with[[:space:]]
+(^|[^[:alnum:]])(written|created|authored|generated) by (an? )?(ai|claude|chatgpt|copilot|gemini)([^[:alnum:]]|$)'
+
+# Lines starting with # are comments git removes from the message
+if grep -v '^#' "${1:--}" | grep -i -E -e "$PATTERNS"; then
+  echo 'AI attribution is not allowed in commit messages, see CONTRIBUTING.md' >&2
+  exit 1
+fi
