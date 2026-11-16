@@ -26,6 +26,7 @@ import { getLastYearDownloadsResult } from '../../services/npm/get-last-year-dow
 import { resolvePackageDetails } from '../../services/npm/packages/resolve-package-details';
 import { getLatestVersionFromPackage } from '../../services/npm/packages/utils/get-latest-version-from-package';
 import { getPackageByVersion } from '../../services/npm/packages/utils/get-package-by-version';
+import { packageBestPractices } from '../../services/package/best-practices';
 import { bundleSize } from '../../services/package/bundle-size';
 import { getDependenciesMeta } from '../../services/package/dependencies-meta';
 import { packageHealth, type Health } from '../../services/package/health';
@@ -109,6 +110,11 @@ export const PackagePage = async (
   const repoUrl: NpmRepository | string | undefined = normalizeKnownRepoUrl(
     details.repository
   );
+  // Started now, so it runs while the repository stats are fetched
+  const bestPractices = packageBestPractices(
+    typeof repoUrl === 'string' ? repoUrl : undefined,
+    signal
+  );
 
   let stars: number | null = null;
   let openIssues: number | null = null;
@@ -137,6 +143,7 @@ export const PackagePage = async (
     esm: latestMeta?.type === 'module',
     attested:
       signals.provenance?.reasons.includes('attestations-present') ?? false,
+    bestPractices: await bestPractices,
     // The range itself, like ">=22.9.0": `enginesNode` is formatted for display
     enginesNode:
       typeof latestMeta?.engines?.node === 'string'

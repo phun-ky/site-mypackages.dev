@@ -192,6 +192,50 @@ test.describe('package page', () => {
   });
 });
 
+test.describe('OpenSSF Best Practices', () => {
+  const chips = (page: Page) =>
+    page.getByRole('list', { name: 'About this package' });
+
+  test('shows the badge of a registered repository', async ({ page }) => {
+    await page.route(
+      'https://www.bestpractices.dev/projects.json*',
+      (route) => {
+        expect(new URL(route.request().url()).searchParams.get('url')).toBe(
+          'https://github.com/example/speccer'
+        );
+
+        return route.fulfill({
+          headers: { 'Access-Control-Allow-Origin': '*' },
+          json: [
+            {
+              id: 1234,
+              badge_level: 'silver',
+              tiered_percentage: 200,
+              baseline_tiered_percentage: 0
+            }
+          ]
+        });
+      }
+    );
+    await page.goto('/packages/speccer');
+    await waitForApp(page);
+
+    await expect(
+      chips(page).getByRole('link', { name: 'OpenSSF Silver' })
+    ).toHaveAttribute('href', 'https://www.bestpractices.dev/projects/1234');
+  });
+
+  test("shows nothing for a repository that isn't registered", async ({
+    page
+  }) => {
+    await page.goto('/packages/speccer');
+    await waitForApp(page);
+
+    await expect(chips(page)).toContainText('v1.0.0');
+    await expect(chips(page)).not.toContainText('OpenSSF');
+  });
+});
+
 test('goes from a user to one of their packages', async ({ page }) => {
   await page.goto('/users/phun-ky');
   await waitForApp(page);

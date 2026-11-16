@@ -1,5 +1,9 @@
 import { areaChart, releaseHeatmap, ring } from '../../components/media/Charts';
 import { getInitialsForUser } from '../../components/page-section/Header/utils/get-initials-for-user';
+import {
+  bestPracticesUrl,
+  type BestPracticesResult
+} from '../../services/package/best-practices';
 import type { Health } from '../../services/package/health';
 import { dayName, monthName } from '../../utils/downloads';
 import { escapeAttr, escapeHtml } from '../../utils/escape-html';
@@ -19,6 +23,7 @@ export type ReportData = {
   types: boolean;
   esm: boolean;
   attested: boolean;
+  bestPractices: BestPracticesResult | null;
   enginesNode: string | null;
   deprecated: string | null;
   dependencies: number;
@@ -59,6 +64,11 @@ const userLink = (name: string) =>
   `<a href="/users/${escapeAttr(name)}" data-link>${escapeHtml(name)}</a>`;
 const chip = (text: string, className = '') =>
   `<li class="report-chip${className ? ` ${className}` : ''}">${escapeHtml(text)}</li>`;
+// Only for a registered project; nothing when it isn't, or can't be checked
+const bestPracticesChip = (result: BestPracticesResult | null) =>
+  result?.meta
+    ? `<li class="report-chip is-openssf"><a href="${escapeAttr(bestPracticesUrl(result.meta.id))}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(result.title)}">OpenSSF ${escapeHtml(result.label)}</a></li>`
+    : '';
 
 export const reportHead = (d: ReportData, now: number) => {
   const [owner, ...others] = d.maintainers;
@@ -74,6 +84,7 @@ export const reportHead = (d: ReportData, now: number) => {
     d.types ? chip('TypeScript types') : '',
     chip(d.esm ? 'ESM' : 'CommonJS'),
     d.attested ? chip('Provenance') : '',
+    bestPracticesChip(d.bestPractices),
     d.enginesNode ? chip(`Node ${d.enginesNode}`) : '',
     chip(
       d.dependencies === 0

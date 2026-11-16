@@ -35,6 +35,7 @@ for each package. Search any package or npm user; no account needed.
 | Downloads                              | The [npm downloads API](https://github.com/npm/registry/blob/main/docs/download-counts.md) |
 | Vulnerabilities                        | [OSV](https://osv.dev)                                                                     |
 | Stars, forks and issues                | GitHub, GitLab, Bitbucket or Azure DevOps, for the package's repository                    |
+| OpenSSF Best Practices badge           | [bestpractices.dev](https://www.bestpractices.dev), for the package's repository           |
 
 The [FAQ](https://mypackages.dev/help/faq) explains how each number is counted.
 
