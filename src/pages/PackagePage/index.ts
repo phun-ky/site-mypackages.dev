@@ -16,6 +16,7 @@ import {
   releasesSection,
   reportHead,
   usage,
+  usedBy,
   verdictCard,
   type ReportData
 } from '../../features/package-report/sections';
@@ -35,6 +36,7 @@ import { packagePopularity } from '../../services/package/popularity';
 import { packageProvenance } from '../../services/package/provenance';
 import { packageQuality } from '../../services/package/quality';
 import { packageSecurity } from '../../services/package/security';
+import { packageUsedBy } from '../../services/package/used-by';
 import { getShowProfilePictures } from '../../services/supabase/utils/profile-pictures';
 import type { NpmRepository } from '../../types';
 import { safeUrl } from '../../utils/escape-html';
@@ -64,6 +66,9 @@ export const PackagePage = async (
 
   const now = Date.now();
   const details = await resolvePackageDetails(packageName, signal);
+  // Started now, so it runs while the downloads, OSV and the repository are
+  // fetched
+  const dependents = packageUsedBy(details.name, signal);
   const { releaseHealth, time } = details;
   const latestVersion = getLatestVersionFromPackage(details);
   const latestMeta = getPackageByVersion({
@@ -186,13 +191,15 @@ export const PackagePage = async (
     },
     openIssues,
     stars,
-    keywords: Array.isArray(details.keywords) ? details.keywords : []
+    keywords: Array.isArray(details.keywords) ? details.keywords : [],
+    usedBy: await dependents
   };
 
   return html`<div class="package-page nebula-page">
     <div class="report">
       ${reportHead(data, now)} ${notice(Boolean(session))} ${verdictCard(data)}
       ${usage(data)} ${releasesSection(data, now)} ${needs(data)}
+      ${usedBy(data)}
       ${linksAndMaintainers(data, {
         pictures: await getShowProfilePictures(session)
       })}
