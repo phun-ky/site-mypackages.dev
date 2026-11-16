@@ -78,7 +78,6 @@ describe('packageBestPractices', () => {
       return response();
     }) as typeof fetch;
   };
-
   const stored = new Map<string, string>();
 
   // localStorage isn't in Node
