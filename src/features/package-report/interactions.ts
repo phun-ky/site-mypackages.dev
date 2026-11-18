@@ -17,16 +17,23 @@ const showChart = (by: 'month' | 'week') => {
 const copyInstall = async () => {
   const command = document.getElementById('install-command')?.textContent;
   const button = document.getElementById('copy-install');
+  // A changed label isn't always read out, so the result is said here too
+  const status = document.getElementById('copy-status');
+  const say = (text: string) => {
+    button?.setAttribute('aria-label', text);
+
+    if (status) status.textContent = text;
+  };
 
   if (!command || !button) return;
 
   try {
     await navigator.clipboard.writeText(command);
-    button.setAttribute('aria-label', 'Copied the install command');
+    say('Copied the install command');
     button.classList.add('is-copied');
   } catch {
     // Without clipboard access, the command can still be selected by hand
-    button.setAttribute('aria-label', "Copying isn't allowed here");
+    say("Copying isn't allowed here");
   }
 };
 

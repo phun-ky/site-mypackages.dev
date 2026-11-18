@@ -83,7 +83,7 @@ export const pageHead = ({
   <span class="user-avatar" aria-hidden="true">${escapeHtml(getInitialsForUser(username))}</span>
   <div class="user-title">
     <h1>${title}</h1>
-    <p class="user-sub">${isPartial(portfolio) ? `Showing ${full.format(portfolio.packages.length)} of ${countPackages(portfolio.found)}` : countPackages(portfolio.packages.length)} maintained on npm${overviewLink} · <a href="https://www.npmjs.com/~${escapeAttr(username)}" target="_blank" rel="noopener noreferrer">npm profile</a></p>
+    <p class="user-sub">${isPartial(portfolio) ? `Showing ${full.format(portfolio.packages.length)} of ${countPackages(portfolio.found)}` : countPackages(portfolio.packages.length)} maintained on npm${overviewLink} · <a href="https://www.npmjs.com/~${escapeAttr(username)}" target="_blank" rel="noopener noreferrer">npm profile<span class="visually-hidden"> (opens in a new tab)</span></a></p>
   </div>
   <div class="user-controls">
     <button type="button" id="refresh-data" class="pill-button"><span aria-hidden="true">↻</span> Refresh data</button>
@@ -246,6 +246,6 @@ export const topics = (portfolio: Portfolio) =>
   portfolio.topics.length
     ? `<section class="user-section" aria-labelledby="topics-title">
   <div class="user-section-head"><h2 id="topics-title">Topics</h2><span class="user-label">The keywords used most across these packages</span></div>
-  <ul class="user-topics">${portfolio.topics.map((t) => `<li><a href="https://www.npmjs.com/search?q=keywords:${encodeURIComponent(t.keyword)}" target="_blank" rel="noopener noreferrer">${escapeHtml(t.keyword)} <span class="n">${t.count}</span></a></li>`).join('')}</ul>
+  <ul class="user-topics">${portfolio.topics.map((t) => `<li><a href="https://www.npmjs.com/search?q=keywords:${encodeURIComponent(t.keyword)}" target="_blank" rel="noopener noreferrer">${escapeHtml(t.keyword)} <span class="n">${t.count}</span><span class="visually-hidden"> (opens in a new tab)</span></a></li>`).join('')}</ul>
 </section>`
     : '';

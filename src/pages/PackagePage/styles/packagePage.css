@@ -288,6 +288,16 @@
       rgb(var(--rgb-brand-2))
     );
   }
+
+  /* Forced colours drop backgrounds, which would empty the bar */
+  @media (forced-colors: active) {
+    border: 1px solid CanvasText;
+
+    & i {
+      forced-color-adjust: none;
+      background: CanvasText;
+    }
+  }
 }
 
 .signal-score {

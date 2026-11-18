@@ -305,7 +305,9 @@ test.describe('only the packages', () => {
       '1 packages'
     );
     await expect(
-      page.getByRole('link', { name: 'Users', exact: true })
+      page
+        .getByRole('navigation', { name: 'Main' })
+        .getByRole('link', { name: 'Users', exact: true })
     ).toHaveAttribute('aria-current', 'page');
 
     await page.getByRole('link', { name: 'Overview' }).click();

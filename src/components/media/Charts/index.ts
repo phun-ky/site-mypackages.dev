@@ -80,8 +80,14 @@ export const areaChart = (
         `<text class="chart-label" x="${x(i)}" y="${h - 6}" text-anchor="middle">${escapeAttr(l)}</text>`
     )
     .join('');
+  // The numbers too, when every point has a label to say them with, so the
+  // chart isn't only a picture to screen readers. The weekly charts label
+  // every ninth week, and have the monthly chart beside them.
+  const name = labels.every(Boolean)
+    ? `${label}: ${values.map((v, i) => `${labels[i]} ${compact.format(v)}`).join(', ')}`
+    : label;
 
-  return `<svg class="area-chart" viewBox="0 0 ${w} ${h}" role="img" aria-label="${escapeAttr(label)}">${grid}${months}<polygon class="sparkline-area" points="${pad.l},${h - pad.b} ${line} ${w - pad.r},${h - pad.b}"/><polyline class="sparkline-line" points="${line}"/></svg>`;
+  return `<svg class="area-chart" viewBox="0 0 ${w} ${h}" role="img" aria-label="${escapeAttr(name)}">${grid}${months}<polygon class="sparkline-area" points="${pad.l},${h - pad.b} ${line} ${w - pad.r},${h - pad.b}"/><polyline class="sparkline-line" points="${line}"/></svg>`;
 };
 
 /** A score from 0 to 100 as a ring, with the number in the middle */

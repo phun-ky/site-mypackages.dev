@@ -166,6 +166,33 @@ test.describe('keyboard', () => {
     await expect(toggle).toHaveAttribute('aria-expanded', 'false');
     await expect(toggle).toBeFocused();
   });
+
+  // Focus stayed on the link that was followed, or fell to <body> when the
+  // page replaced it, so screen readers didn't hear the new page
+  test('moves focus to the new page, and back', async ({ page }) => {
+    await open(page, '/');
+
+    const main = page.locator('main#main');
+    const search = page.getByRole('searchbox', {
+      name: 'Package or npm username'
+    });
+
+    await search.fill('speccer');
+    await search.press('Enter');
+    await expect(page).toHaveURL('/packages/speccer');
+    await expect(main).toBeFocused();
+
+    await page
+      .getByRole('navigation', { name: 'Main' })
+      .getByRole('link', { name: 'Users' })
+      .click();
+    await expect(page).toHaveURL('/users');
+    await expect(main).toBeFocused();
+
+    await page.goBack();
+    await expect(page).toHaveURL('/packages/speccer');
+    await expect(main).toBeFocused();
+  });
 });
 
 test.describe('reduced motion', () => {

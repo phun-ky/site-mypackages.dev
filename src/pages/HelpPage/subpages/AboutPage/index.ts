@@ -36,7 +36,7 @@ const story = `<section class="help-block help-two" aria-label="The site and its
     <div class="help-card">
       <h2 class="visually-hidden">Who makes it</h2>
       <div class="help-who"><span class="help-avatar" aria-hidden="true">PK</span><p>Made and maintained by <a href="/users/phun-ky" data-link>phun-ky</a>, as an open source project on GitHub.</p></div>
-      <div class="help-row"><a class="pill-button is-primary" href="/help/feedback" data-link>Send feedback</a><a class="pill-button" href="${REPOSITORY}" target="_blank" rel="noopener noreferrer">Source on GitHub</a></div>
+      <div class="help-row"><a class="pill-button is-primary" href="/help/feedback" data-link>Send feedback</a><a class="pill-button" href="${REPOSITORY}" target="_blank" rel="noopener noreferrer">Source on GitHub<span class="visually-hidden"> (opens in a new tab)</span></a></div>
     </div>
     <div class="help-card">
       <h2>Accounts and privacy</h2>
@@ -47,7 +47,7 @@ const story = `<section class="help-block help-two" aria-label="The site and its
           <li>For an account: your GitHub name and email, your settings, the packages you add, and any npm token you store, encrypted.</li>
           <li>No analytics, no ads, and nothing is sold or shared.</li>
         </ul>
-        <p><a href="${REPOSITORY}/blob/main/PRIVACY.md" target="_blank" rel="noopener noreferrer">What is stored, for how long, and how to delete it</a></p>
+        <p><a href="${REPOSITORY}/blob/main/PRIVACY.md" target="_blank" rel="noopener noreferrer">What is stored, for how long, and how to delete it<span class="visually-hidden"> (opens in a new tab)</span></a></p>
       </div>
     </div>
   </div>

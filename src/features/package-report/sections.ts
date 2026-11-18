@@ -70,7 +70,7 @@ const chip = (text: string, className = '') =>
 // Only for a registered project; nothing when it isn't, or can't be checked
 const bestPracticesChip = (result: BestPracticesResult | null) =>
   result?.meta
-    ? `<li class="report-chip is-openssf"><a href="${escapeAttr(bestPracticesUrl(result.meta.id))}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(result.title)}">OpenSSF ${escapeHtml(result.label)}</a></li>`
+    ? `<li class="report-chip is-openssf"><a href="${escapeAttr(bestPracticesUrl(result.meta.id))}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(result.title)}">OpenSSF ${escapeHtml(result.label)}<span class="visually-hidden"> (opens in a new tab)</span></a></li>`
     : '';
 
 export const reportHead = (d: ReportData, now: number) => {
@@ -106,7 +106,7 @@ export const reportHead = (d: ReportData, now: number) => {
   <p class="description">${escapeHtml(d.description)}</p>
   <ul class="report-chips" aria-label="About this package">${chips}</ul>
   ${deprecated}
-  <div class="report-install"><code id="install-command">npm i ${escapeHtml(d.name)}</code><button type="button" id="copy-install" class="report-copy" aria-label="Copy the install command"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button></div>
+  <div class="report-install"><code id="install-command">npm i ${escapeHtml(d.name)}</code><button type="button" id="copy-install" class="report-copy" aria-label="Copy the install command"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button><span class="visually-hidden" role="status" id="copy-status"></span></div>
 </div>`;
 };
 
@@ -119,7 +119,7 @@ export const notice = (signedIn: boolean) =>
 
 export const verdictCard = (d: ReportData) => {
   if (!d.health) {
-    return '<section class="report-card report-verdict" aria-labelledby="verdict-title"><div><span class="report-label">Package health</span><h2 id="verdict-title">Not available</h2><p>The downloads for this package couldn\'t be fetched, so its health couldn\'t be worked out. Try again later.</p></div></section>';
+    return '<section class="report-card report-verdict" aria-labelledby="verdict-title"><div><span class="report-label" aria-hidden="true">Package health</span><h2 id="verdict-title"><span class="visually-hidden">Package health: </span>Not available</h2><p>The downloads for this package couldn\'t be fetched, so its health couldn\'t be worked out. Try again later.</p></div></section>';
   }
 
   const rows = d.rows
@@ -131,7 +131,7 @@ export const verdictCard = (d: ReportData) => {
 
   return `<section class="report-card report-verdict" aria-labelledby="verdict-title">
   ${ring(d.health.scorePct, { label: 'Package health' })}
-  <div class="report-summary"><span class="report-label">Package health</span><h2 id="verdict-title">${d.health.label}</h2><p>${escapeHtml(d.verdict)}</p></div>
+  <div class="report-summary"><span class="report-label" aria-hidden="true">Package health</span><h2 id="verdict-title"><span class="visually-hidden">Package health: </span>${d.health.label}</h2><p>${escapeHtml(d.verdict)}</p></div>
   <ul class="signals" aria-label="What the score is made of">${rows}</ul>
   <p class="report-how"><a href="/help/faq#how-is-package-health-worked-out" data-link>How the score is worked out</a> · ${Math.round(d.health.confidencePct)}% of the data was available</p>
 </section>`;
@@ -204,7 +204,7 @@ export const releasesSection = (d: ReportData, now: number) => {
   return `<section class="report-section" aria-labelledby="releases-title">
   <h2 id="releases-title">Releases</h2>
   <p class="report-lead">${lead}</p>
-  <div class="report-card report-pad">${releaseHeatmap(d.releasesLastYear, { label: `${d.releasesLastYear.length} releases in the last year`, now })}</div>
+  <div class="report-card report-pad">${releaseHeatmap(d.releasesLastYear, { label: `${d.releasesLastYear.length} ${d.releasesLastYear.length === 1 ? 'release' : 'releases'} in the last year`, now })}</div>
   ${recent ? `<ol class="report-card report-pad versions" aria-label="Recent versions">${recent}</ol>` : ''}
 </section>`;
 };
@@ -258,7 +258,7 @@ export const usedBy = (d: ReportData) => {
     .join('');
   const all =
     u && u.packages > u.names.length
-      ? `<p class="report-how"><a href="${escapeAttr(usedByUrl(d.name))}" target="_blank" rel="noopener noreferrer">All of them on ecosyste.ms</a></p>`
+      ? `<p class="report-how"><a href="${escapeAttr(usedByUrl(d.name))}" target="_blank" rel="noopener noreferrer">All of them on ecosyste.ms<span class="visually-hidden"> (opens in a new tab)</span></a></p>`
       : '';
 
   return `<section class="report-section" aria-labelledby="used-by-title">
@@ -271,7 +271,7 @@ export const usedBy = (d: ReportData) => {
 
 const linkRow = (text: string, url: string | undefined, note: string) =>
   url
-    ? `<li><a href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer">${text}</a><span class="muted">${escapeHtml(note)}</span></li>`
+    ? `<li><a href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer">${text}<span class="visually-hidden"> (opens in a new tab)</span></a><span class="muted">${escapeHtml(note)}</span></li>`
     : '';
 const shortUrl = (url?: string) => {
   try {
@@ -328,5 +328,5 @@ export const linksAndMaintainers = (
 
 export const keywords = (d: ReportData) =>
   d.keywords.length
-    ? `<section class="report-section" aria-labelledby="keywords-title"><h2 id="keywords-title">Keywords</h2><ul class="report-keywords" id="keywords">${d.keywords.map((k) => `<li><a href="https://www.npmjs.com/search?q=keywords:${encodeURIComponent(k)}" target="_blank" rel="noopener noreferrer">${escapeHtml(k)}</a></li>`).join('')}</ul></section>`
+    ? `<section class="report-section" aria-labelledby="keywords-title"><h2 id="keywords-title">Keywords</h2><ul class="report-keywords" id="keywords">${d.keywords.map((k) => `<li><a href="https://www.npmjs.com/search?q=keywords:${encodeURIComponent(k)}" target="_blank" rel="noopener noreferrer">${escapeHtml(k)}<span class="visually-hidden"> (opens in a new tab)</span></a></li>`).join('')}</ul></section>`
     : '';

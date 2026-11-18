@@ -14,7 +14,6 @@ export const Link = (props: LinkPropsType) => {
   // `to` and attribute values can hold data from npm, so escape them.
   // `children` is markup.
   const href = escapeAttr(to);
-  const postfix = '';
   const attrs = Object.entries(rest)
     .map((attr) => {
       const [property, value] = attr;
@@ -30,7 +29,9 @@ export const Link = (props: LinkPropsType) => {
       return `<a href="${href}" class="${className}"${attrs}${_style}>${children}</a>`;
     }
 
-    // postfix = typeof children === 'string' ? ' (åpnes i ny fane)' : '';
+    // Said to screen readers, so a new tab isn't a surprise
+    const postfix =
+      '<span class="visually-hidden"> (opens in a new tab)</span>';
 
     return `<a href="${href}" target="_blank" rel="noopener noreferrer" class="${className}"${attrs}${_style}>${children}${postfix}</a>`;
   }
