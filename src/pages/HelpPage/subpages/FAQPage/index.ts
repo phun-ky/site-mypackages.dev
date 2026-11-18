@@ -5,11 +5,7 @@ import {
 } from '../../../../features/help/faq';
 import { attachFaqEvents } from '../../../../features/help/interactions';
 import { questionHtml, scoreFigure } from '../../../../features/help/sections';
-import {
-  contents,
-  helpSidebar,
-  onThisPage
-} from '../../../../features/help/topics';
+import { contents, helpSidebar } from '../../../../features/help/topics';
 
 import '../../styles/helpPage.css';
 
@@ -45,7 +41,6 @@ export const FAQPage = async () => {
         </p>
         ${contents()} ${topics()}
       </div>
-      ${onThisPage()}
     </div>
   </div>`;
 };
