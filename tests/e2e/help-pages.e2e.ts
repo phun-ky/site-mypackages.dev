@@ -87,9 +87,15 @@ test.describe('questions and answers', () => {
 
     await expect(
       page
-        .getByRole('complementary', { name: 'On this page' })
+        .getByRole('navigation', { name: 'Help' })
         .getByRole('link', { name: 'GitHub data' })
     ).toHaveClass(/is-here/);
+  });
+
+  test('has no "On this page" list next to the sidebar', async ({ page }) => {
+    await expect(
+      page.getByRole('complementary', { name: 'On this page' })
+    ).toHaveCount(0);
   });
 
   test('draws the scoring model', async ({ page }) => {

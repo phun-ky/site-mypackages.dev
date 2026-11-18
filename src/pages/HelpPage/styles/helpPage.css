@@ -533,10 +533,11 @@
   }
 }
 
-/* The FAQ, as docs: a sidebar, the answers, and "On this page" */
+/* The FAQ, as docs: the sidebar lists the topics, so there is no "On this
+   page" column */
 .help-docs {
   display: grid;
-  grid-template-columns: 15rem minmax(0, 44rem) 12rem;
+  grid-template-columns: 15rem minmax(0, 44rem);
   justify-content: center;
   align-items: start;
   gap: 3rem;
@@ -545,8 +546,7 @@
   padding: 0 var(--nebula-gutter) 4rem;
 }
 
-.help-side,
-.help-onpage {
+.help-side {
   position: sticky;
   top: 5.5rem;
   padding-top: 2.5rem;
@@ -554,7 +554,7 @@
 
   /* The sidebar's groups are paragraphs: headings there came before the
      page's h1 */
-  & :is(h2, .help-group) {
+  & .help-group {
     margin: 1.25rem 0 0.4rem;
     font: 600 0.75rem var(--font-family-heading);
     letter-spacing: 0.08em;
@@ -562,7 +562,7 @@
     color: rgb(var(--rgb-text-dim));
   }
 
-  & :is(h2, .help-group):first-child {
+  & .help-group:first-child {
     margin-top: 0;
   }
 
@@ -582,17 +582,6 @@
   &.is-here {
     border-color: rgb(var(--rgb-brand));
     color: rgb(var(--rgb-text-bright));
-  }
-}
-
-.help-onpage a {
-  display: block;
-  padding: 0.2rem 0;
-  font-size: 0.85rem;
-  color: rgb(var(--rgb-text-dim));
-
-  &.is-here {
-    color: rgb(var(--rgb-brand));
   }
 }
 
@@ -659,16 +648,6 @@
 
   & a {
     color: rgb(var(--rgb-brand));
-  }
-}
-
-@media (max-width: 1180px) {
-  .help-docs {
-    grid-template-columns: 14rem minmax(0, 44rem);
-  }
-
-  .help-onpage {
-    display: none;
   }
 }
 

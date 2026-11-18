@@ -10,10 +10,6 @@ export const helpSidebar = () =>
   <p class="help-group">Questions and answers</p><ul>${FAQ_TOPICS.map((t) => `<li><a href="#${t.id}" data-topic="${t.id}">${t.title}</a></li>`).join('')}</ul>
 </nav>`;
 
-/** Every topic on the FAQ, for wide screens. The current one is marked as you scroll. */
-export const onThisPage = () =>
-  `<aside class="help-onpage" aria-label="On this page"><h2>On this page</h2><ul>${FAQ_TOPICS.map((t) => `<li><a href="#${t.id}" data-topic="${t.id}">${t.title}</a></li>`).join('')}</ul></aside>`;
-
 /** The topics for phones, where there's no sidebar */
 export const contents = () =>
   `<details class="help-contents help-card"><summary>Contents</summary><ul>${FAQ_TOPICS.map((t) => `<li><a href="#${t.id}">${t.title}</a></li>`).join('')}</ul></details>`;

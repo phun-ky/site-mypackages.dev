@@ -18,7 +18,7 @@ const scrollToHash = () => {
 
   target?.scrollIntoView();
 };
-/** Marks the topic being read, in the sidebar and "On this page" */
+/** Marks the topic being read in the sidebar */
 const watchTopics = () => {
   topicObserver?.disconnect();
 
