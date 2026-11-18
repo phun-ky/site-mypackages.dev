@@ -3,7 +3,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { routes } from '../../src/lib/spa/router/routes';
 
 import { expect, test, waitForApp } from './fixtures';
-import { mockPackages, mockUser } from './mocks';
+import { mockPackages, mockUser, signIn } from './mocks';
 
 const PAGES = [
   ...routes
@@ -99,6 +99,45 @@ for (const path of PAGES) {
       expect(unlabelled).toEqual([]);
     });
 
+    // The header hides its links on a phone, so the footer has them on
+    // every page, or a phone could only go back to the start page
+    test('links to the other sections at phone width', async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 });
+
+      const nav = page.getByRole('navigation', { name: 'Footer' });
+
+      for (const name of ['Packages', 'Users', 'About', 'FAQ']) {
+        await expect(nav.getByRole('link', { name })).toBeVisible();
+      }
+    });
+
+    // The FAQ's sidebar had headings before the page's own
+    test('starts its headings with the h1', async ({ page }) => {
+      const first = await page
+        .locator('h1, h2, h3, h4, h5, h6')
+        .first()
+        .evaluate((el) => el.tagName);
+
+      expect(first).toBe('H1');
+    });
+
+    test('says which links open a new tab', async ({ page }) => {
+      const silent = await page
+        .locator('a[target="_blank"]')
+        .evaluateAll((links) =>
+          links
+            .filter(
+              (a) =>
+                !`${a.textContent} ${a.getAttribute('aria-label') ?? ''}`.includes(
+                  'opens in a new tab'
+                )
+            )
+            .map((a) => a.outerHTML.slice(0, 120))
+        );
+
+      expect(silent).toEqual([]);
+    });
+
     test('has no block elements in headings', async ({ page }) => {
       knownBug(path, 'has no block elements in headings');
 
@@ -113,5 +152,34 @@ for (const path of PAGES) {
 
       expect(invalid).toEqual([]);
     });
+  });
+}
+
+// Signed in, the header has the account menu, which showed initials that
+// weren't in its name, "Account menu"
+for (const path of ['/dashboard', '/profile']) {
+  test(`${path}, signed in, has no accessibility violations`, async ({
+    page
+  }) => {
+    await signIn(page, { npmUsername: 'phun-ky' });
+    await page.goto(path);
+    await waitForApp(page);
+
+    const { violations } = await new AxeBuilder({ page })
+      .options({
+        preload: false,
+        // Label in Name, which axe only runs when asked
+        rules: { 'label-content-name-mismatch': { enabled: true } }
+      })
+      .analyze();
+
+    expect(
+      violations.map(
+        (violation) =>
+          `${violation.impact} ${violation.id}: ${violation.nodes
+            .map((node) => node.target.join(' '))
+            .join(', ')}`
+      )
+    ).toEqual([]);
   });
 }

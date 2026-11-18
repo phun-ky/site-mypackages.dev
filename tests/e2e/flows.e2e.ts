@@ -137,6 +137,10 @@ test.describe('package page', () => {
       'aria-label',
       /Package health/
     );
+    // Not only "OK", in a list of headings
+    await expect(
+      verdict.getByRole('heading', { name: /^Package health: \w+/ })
+    ).toBeVisible();
     await expect(
       page
         .getByRole('list', { name: 'What the score is made of' })
@@ -162,6 +166,30 @@ test.describe('package page', () => {
     await expect(month).toHaveAttribute('aria-pressed', 'false');
   });
 
+  test('says the monthly downloads, not only that there is a chart', async ({
+    page
+  }) => {
+    await expect(
+      page.locator('#chart-months').getByRole('img', {
+        name: /^Downloads per month, the last 12 complete months: \w+ [\d.]+/
+      })
+    ).toBeAttached();
+  });
+
+  // A pressed toggle was marked only by its background, which forced
+  // colours, like Windows' contrast themes, drop
+  test('marks the pressed toggle in forced colours', async ({ page }) => {
+    await page.emulateMedia({ forcedColors: 'active' });
+
+    const outline = (name: string) =>
+      page
+        .getByRole('button', { name })
+        .evaluate((el) => getComputedStyle(el).outlineStyle);
+
+    expect(await outline('Month')).toBe('solid');
+    expect(await outline('Week')).toBe('none');
+  });
+
   test('copies the install command', async ({ page }) => {
     // Firefox can't be granted clipboard access, so record what's written
     await page.evaluate(() => {
@@ -180,6 +208,10 @@ test.describe('package page', () => {
     await expect(
       page.getByRole('button', { name: 'Copied the install command' })
     ).toBeVisible();
+    // Said in a status too: a changed label isn't always read out
+    await expect(page.locator('#copy-status')).toHaveText(
+      'Copied the install command'
+    );
     expect(
       await page.evaluate(
         () => (window as unknown as { copied: string }).copied
@@ -303,4 +335,16 @@ test('goes from a user to one of their packages', async ({ page }) => {
     page.getByRole('heading', { level: 1, name: /@phun-ky\/speccer/ })
   ).toBeVisible();
   expect(await isSameDocument(page)).toBe(true);
+});
+
+// A typed or shared address for a package npm doesn't have showed a report,
+// with a score, for nothing
+test("says a package npm doesn't have isn't there", async ({ page }) => {
+  await page.goto('/packages/not-on-npm');
+  await waitForApp(page);
+
+  await expect(
+    page.getByRole('heading', { level: 1, name: 'Page not found' })
+  ).toBeVisible();
+  await expect(page.locator('.score-ring')).toHaveCount(0);
 });

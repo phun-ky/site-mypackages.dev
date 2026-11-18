@@ -28,10 +28,14 @@ export const ProfileMenu = async (session?: Session | null) => {
   const { user } = session;
   const { user_metadata } = user;
   const { name, user_name, email } = user_metadata;
-  const avatar =
-    avatarUrl && avatarUrl !== ''
-      ? `<img src="${escapeAttr(avatarUrl)}" alt="${escapeAttr(name)}" class="avatar" />`
-      : `<span class="avatar">${escapeHtml(getInitialsForUser(name))}</span>`;
+  const hasPicture = Boolean(avatarUrl);
+  const initials = getInitialsForUser(name);
+  // The button's name has the initials it shows, so someone using voice
+  // control can say them (Label in Name). A picture is named by the button.
+  const label = hasPicture ? 'Account menu' : `${initials}, account menu`;
+  const avatar = hasPicture
+    ? `<img src="${escapeAttr(avatarUrl)}" alt="" class="avatar" />`
+    : `<span class="avatar">${escapeHtml(initials)}</span>`;
   const menu = [
     {
       type: 'user-meta',
@@ -111,8 +115,7 @@ export const ProfileMenu = async (session?: Session | null) => {
       <button
         type="button"
         class="${profileMenuLauncherClassNames}"
-        aria-label="Account menu"
-        aria-haspopup="menu"
+        aria-label="${escapeAttr(label)}"
         id="${id}"
         aria-controls="${id}-menu"
         aria-expanded="false"

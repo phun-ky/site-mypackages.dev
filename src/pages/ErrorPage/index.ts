@@ -68,7 +68,7 @@ export const ErrorPage = async ({ error }: PagePropsType) => {
       <dl>${row('Error', e?.name)}${row('Message', e?.message ?? 'No details were given.')}${row('Code', e?.code)}${row('Details', e?.details)}${row('Time', time)}${row('Address', pageUrl)}</dl>
       ${stack ? `<pre><code>${escapeHtml(stack)}</code></pre>` : ''}
     </details>
-    <p class="error-report">Still broken? <a href="${escapeAttr(reportUrl)}" target="_blank" rel="noopener noreferrer">Report it on GitHub</a>, with these details filled in.</p>
+    <p class="error-report">Still broken? <a href="${escapeAttr(reportUrl)}" target="_blank" rel="noopener noreferrer">Report it on GitHub<span class="visually-hidden"> (opens in a new tab)</span></a>, with these details filled in.</p>
   </section>
 </div>`;
 };

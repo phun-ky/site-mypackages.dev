@@ -42,6 +42,15 @@ main:focus {
   outline: none;
 }
 
+/* Forced colours, like Windows' contrast themes, drop the background that
+   is all that marks a pressed toggle, like Month or Table */
+@media (forced-colors: active) {
+  [aria-pressed='true'] {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+}
+
 /* No animations, transitions or smooth scrolling for visitors who ask for
    less motion (#44) */
 @media (prefers-reduced-motion: reduce) {

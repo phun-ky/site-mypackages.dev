@@ -12,20 +12,12 @@ const LICENSE = 'https://creativecommons.org/licenses/by-nc-sa/4.0/';
 // A plain string, so Prettier doesn't split the end tag over two lines,
 // which diff-dom can't read (#64)
 const external = (href: string, text: string, rel = 'noopener noreferrer') =>
-  `<a href="${href}" target="_blank" rel="${rel}">${text}</a>`;
+  `<a href="${href}" target="_blank" rel="${rel}">${text}<span class="visually-hidden"> (opens in a new tab)</span></a>`;
 
-export const Footer = ({ page }: FooterPropsType) => {
-  if (
-    page !== 'StartPage' &&
-    page !== 'FAQPage' &&
-    page !== 'HelpPage' &&
-    page !== 'FeedbackPage' &&
-    page !== 'AboutPage'
-  )
-    return '';
-
-  // The header hides its links on small screens, so they're here too
-  return html`<footer class="footer ${slugify(page)}">
+export const Footer = ({ page }: FooterPropsType) =>
+  // The header hides its links on small screens, so they're here too, on
+  // every page
+  html`<footer class="footer ${slugify(page)}">
     <div class="footer-inner">
       <nav class="footer-nav" aria-label="Footer">
         ${Link({ to: '/packages', children: 'Packages' })}
@@ -74,4 +66,3 @@ export const Footer = ({ page }: FooterPropsType) => {
       </p>
     </div>
   </footer>`;
-};

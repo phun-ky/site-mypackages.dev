@@ -86,7 +86,7 @@ export const ProfilePage = async (
         </div>
         <span class="status" role="status"></span>
       </form>
-      <p><a href="${PRIVACY}" target="_blank" rel="noopener noreferrer">What the site stores, and for how long</a></p>
+      <p><a href="${PRIVACY}" target="_blank" rel="noopener noreferrer">What the site stores, and for how long<span class="visually-hidden"> (opens in a new tab)</span></a></p>
     </section>
 
     <section class="user-card account-card" aria-labelledby="include-title">
@@ -110,7 +110,7 @@ export const ProfilePage = async (
 
     <section class="user-card account-card" aria-labelledby="delete-title">
       <h2 id="delete-title">Delete your account</h2>
-      <p>Email <a href="mailto:security@phun-ky.net">security@phun-ky.net</a> from the address on your GitHub account, and the maintainer deletes it: your settings, the packages you added and your stored tokens. It can't be undone. <a href="${PRIVACY}#deleting-your-data" target="_blank" rel="noopener noreferrer">More about deleting</a></p>
+      <p>Email <a href="mailto:security@phun-ky.net">security@phun-ky.net</a> from the address on your GitHub account, and the maintainer deletes it: your settings, the packages you added and your stored tokens. It can't be undone. <a href="${PRIVACY}#deleting-your-data" target="_blank" rel="noopener noreferrer">More about deleting<span class="visually-hidden"> (opens in a new tab)</span></a></p>
     </section>
   </div>
 </div>`;

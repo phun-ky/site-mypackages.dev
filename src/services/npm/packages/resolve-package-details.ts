@@ -25,6 +25,12 @@ export const resolvePackageDetails = async (
 
   const res = await getPackageDetailsResult(name, signal);
 
+  // npm doesn't have it: the page not found page, not a report on nothing.
+  // The renderer shows that page for an error with 404 in it.
+  if (!res.ok && res.kind === 'http' && res.status === 404) {
+    throw new Error(`404: no npm package called ${name}`);
+  }
+
   if (!res.ok) {
     logNpmFailure(`Package details for ${name}`, res);
 

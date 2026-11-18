@@ -552,7 +552,9 @@
   padding-top: 2.5rem;
   font-size: 0.9rem;
 
-  & h2 {
+  /* The sidebar's groups are paragraphs: headings there came before the
+     page's h1 */
+  & :is(h2, .help-group) {
     margin: 1.25rem 0 0.4rem;
     font: 600 0.75rem var(--font-family-heading);
     letter-spacing: 0.08em;
@@ -560,7 +562,7 @@
     color: rgb(var(--rgb-text-dim));
   }
 
-  & h2:first-child {
+  & :is(h2, .help-group):first-child {
     margin-top: 0;
   }
 

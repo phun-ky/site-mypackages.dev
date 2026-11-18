@@ -143,7 +143,7 @@ export const FAQ_TOPICS: FAQTopic[] = [
       {
         question: 'What does the OpenSSF chip on a package page mean?',
         answer:
-          '<p>The package\'s repository has an <a href="https://www.bestpractices.dev/" target="_blank" rel="noopener noreferrer">OpenSSF Best Practices</a> badge: <strong>Passing</strong>, <strong>Silver</strong> or <strong>Gold</strong>, or <strong>In progress</strong> with the share of the passing criteria met. The maintainers fill in the criteria themselves, so it\'s a self-assessment of the whole repository, not a check of the published version.</p><p>It\'s shown next to the health score, not counted in it, since few projects are registered. Packages whose repository isn\'t registered get no chip.</p>'
+          '<p>The package\'s repository has an <a href="https://www.bestpractices.dev/" target="_blank" rel="noopener noreferrer">OpenSSF Best Practices<span class="visually-hidden"> (opens in a new tab)</span></a> badge: <strong>Passing</strong>, <strong>Silver</strong> or <strong>Gold</strong>, or <strong>In progress</strong> with the share of the passing criteria met. The maintainers fill in the criteria themselves, so it\'s a self-assessment of the whole repository, not a check of the published version.</p><p>It\'s shown next to the health score, not counted in it, since few projects are registered. Packages whose repository isn\'t registered get no chip.</p>'
       },
       {
         question: 'What does "confidence" mean in package health?',

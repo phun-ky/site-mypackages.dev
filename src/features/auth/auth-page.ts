@@ -56,7 +56,7 @@ export const AuthPage = ({ mode }: { mode: 'signin' | 'signup' }) => {
         ? 'New here? <a href="/dashboard/signup" data-link>Create an account</a>'
         : 'Have an account? <a href="/dashboard/signin" data-link>Sign in</a>'
     }</p>
-    <p class="auth-privacy">Signing in uses your GitHub account. <a href="${PRIVACY}" target="_blank" rel="noopener noreferrer">What the site stores</a></p>
+    <p class="auth-privacy">Signing in uses your GitHub account. <a href="${PRIVACY}" target="_blank" rel="noopener noreferrer">What the site stores<span class="visually-hidden"> (opens in a new tab)</span></a></p>
   </section>
   ${PREVIEW}
 </div>`;

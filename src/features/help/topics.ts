@@ -6,8 +6,8 @@ import { FAQ_TOPICS, questionId } from './faq';
 /** The FAQ's sidebar: About and Feedback, then every topic */
 export const helpSidebar = () =>
   `<nav class="help-side" aria-label="Help">
-  <h2>About</h2><ul><li><a href="/help/about" data-link>About My packages</a></li><li><a href="/help/feedback" data-link>Send feedback</a></li></ul>
-  <h2>Questions and answers</h2><ul>${FAQ_TOPICS.map((t) => `<li><a href="#${t.id}" data-topic="${t.id}">${t.title}</a></li>`).join('')}</ul>
+  <p class="help-group">About</p><ul><li><a href="/help/about" data-link>About My packages</a></li><li><a href="/help/feedback" data-link>Send feedback</a></li></ul>
+  <p class="help-group">Questions and answers</p><ul>${FAQ_TOPICS.map((t) => `<li><a href="#${t.id}" data-topic="${t.id}">${t.title}</a></li>`).join('')}</ul>
 </nav>`;
 
 /** Every topic on the FAQ, for wide screens. The current one is marked as you scroll. */
