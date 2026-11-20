@@ -15,6 +15,7 @@ import type {
 import { setTitle } from './utils/set-title';
 import { updateNodes } from './utils/update-nodes';
 import { waitFor } from './utils/wait-for';
+import { withViewTransition } from './utils/with-view-transition';
 
 /**
  * The main functionality that is to be replaced if a framework is to be used
@@ -125,7 +126,10 @@ export const spa = (() => {
         );
       }
     }
-    updateNodes(_root, _html);
+
+    // Fade between pages, not between renders of the same page
+    if (routeChanged) await withViewTransition(() => updateNodes(_root, _html));
+    else updateNodes(_root, _html);
 
     await waitFor(10);
 

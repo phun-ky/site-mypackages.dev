@@ -330,7 +330,7 @@ test.describe('only the packages', () => {
   });
 });
 
-// The layout shows while npm is fetched, instead of a blank loader
+// The layout shows while npm is fetched
 test('shows a skeleton with the name while the packages load', async ({
   page
 }) => {
@@ -350,10 +350,40 @@ test('shows a skeleton with the name while the packages load', async ({
 
   await expect(busy).toBeVisible();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('phun-ky');
-  await expect(page.locator('#loader-container')).not.toHaveClass(/is-visible/);
+  // The loading bar runs until the page itself is in
+  await expect(page.locator('#loader-container')).toHaveClass(/is-visible/);
 
   release();
 
   await expect(busy).toHaveCount(0);
   await expect(page.locator('.user-total')).toBeVisible();
+});
+
+// The first render takes #app's id, which the skeleton looked for, so it
+// only showed on a direct visit
+test('shows the skeleton when reached from another page too', async ({
+  page
+}) => {
+  let release = () => {};
+
+  const held = new Promise<void>((resolve) => (release = resolve));
+
+  await page.route('**/functions/v1/npm-search-by-user-role', async (route) => {
+    await held;
+    await route.fallback();
+  });
+  await page.evaluate(() =>
+    document.dispatchEvent(
+      new CustomEvent('navigateTo', { detail: { to: '/users/someone' } })
+    )
+  );
+
+  const busy = page.locator('.user-page[aria-busy="true"]');
+
+  await expect(busy).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('someone');
+
+  release();
+
+  await expect(busy).toHaveCount(0);
 });

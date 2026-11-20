@@ -21,6 +21,7 @@ import type { PagePropsType } from './lib/spa/types';
 import { getParams } from './lib/spa/utils/get-params';
 import { isReloadingForNewBuild } from './lib/spa/utils/reload-on-new-build';
 import { updateNodes } from './lib/spa/utils/update-nodes';
+import { withViewTransition } from './lib/spa/utils/with-view-transition';
 import { UserPageSkeleton } from './pages/UserPage/skeleton';
 import { supabase } from './services/supabase';
 
@@ -126,16 +127,14 @@ const App = async (initialProps: Partial<PagePropsType>) => {
 
   if (page) {
     const skeleton = SKELETON[_pageId]?.(resolvedProps);
-    const root = document.getElementById('app');
+    // The first render replaces #app's attributes with class="app"
+    const root = document.querySelector<HTMLElement>('#app, body > .app');
 
-    // Before the page's code, whose styles it doesn't need. Not when a newer
-    // navigation has taken over
-    if (skeleton && root && !signal.aborted) {
-      updateNodes(root, shell(skeleton));
-      document
-        .getElementById('loader-container')
-        ?.classList.remove('is-visible');
-    }
+    // Before the page's code, whose styles it doesn't need, with the loading
+    // bar still running. Not when a newer navigation has taken over. Awaited,
+    // so the page itself can't render before it
+    if (skeleton && root && !signal.aborted)
+      await withViewTransition(() => updateNodes(root, shell(skeleton)));
 
     content = await callPage(await page, { props: resolvedProps, signal });
   }

@@ -342,81 +342,45 @@ form.form {
   flex-direction: column;
 }
 
+/* The bar at the top while a page loads, over the page you came from. When
+   loading ends it jumps to full and fades */
 .loader-container {
-  position: absolute;
+  position: fixed;
   z-index: 1000;
-  top: var(--header-height);
-  left: var(--navigation-width);
-  width: calc(100vw - var(--navigation-width));
-  height: calc(100vh - var(--header-height));
-  display: none;
-  place-items: center;
-  background-color: rgb(var(--rgb-canvas));
-  user-select: none;
-  pointer-events: none;
-  &.is-visible {
-    display: grid;
-  }
-}
-
-body .app:has(.nebula-page) + .loader-container {
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-}
-.loader {
-  --size-mid: 6vmin;
-  --size-dot: 1.5vmin;
-  --size-bar: 0.4vmin;
-  --size-square: 3vmin;
-
-  position: relative;
-  width: 50%;
-  display: grid;
-  place-items: center;
-}
-
-.loader::before,
-.loader::after {
-  content: '';
-  box-sizing: border-box;
-  position: absolute;
-}
-
-.loader::before,
-.loader::after {
-  width: var(--size-dot);
-  height: var(--size-dot);
-  background-color: var(--color-brand);
-  border-radius: 50%;
+  inset: 0 0 auto;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    rgb(var(--rgb-brand)),
+    rgb(var(--rgb-brand-2))
+  );
+  transform-origin: left;
   opacity: 0;
-  animation: loader 0.8s cubic-bezier(0.2, 0.32, 0, 0.87) infinite;
-}
+  pointer-events: none;
+  transition: opacity 0.25s ease 0.15s;
 
-.loader::after {
-  animation-delay: 0.3s;
-}
-
-@keyframes loader {
-  0%,
-  80%,
-  100% {
-    opacity: 0;
-  }
-
-  33% {
+  &.is-visible {
     opacity: 1;
+    transition: none;
+    animation: loader-progress 8s cubic-bezier(0.1, 0.6, 0.3, 1) forwards;
+  }
+}
+
+@keyframes loader-progress {
+  from {
+    transform: scaleX(0);
   }
 
-  0%,
-  100% {
-    transform: translateX(-4vmin);
+  to {
+    transform: scaleX(0.9);
   }
+}
 
-  90% {
-    transform: translateX(4vmin);
-  }
+/* A new page, or a page's skeleton, fades in over the one before. Shorter
+   than the browser's 250 ms */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 200ms;
 }
 
 table {
