@@ -1,5 +1,5 @@
-import { routes } from '../../lib/spa/router/routes';
-import { escapeAttr, escapeHtml } from '../../utils/escape-html';
+import { routes } from '../../lib/spa/router/routes.ts';
+import { escapeAttr, escapeHtml } from '../../utils/escape-html.ts';
 
 // Each page's title, description and canonical URL (#40), in one place for
 // the build, which writes them into the prerendered pages, and the router,

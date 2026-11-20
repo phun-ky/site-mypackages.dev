@@ -742,3 +742,55 @@
     white-space: normal;
   }
 }
+
+/* The skeleton painted while the page loads: the same layout, in shimmering
+   blocks. The site-wide reduced-motion rule stops the shimmer */
+.skeleton {
+  display: block;
+  background: linear-gradient(
+      90deg,
+      rgb(var(--rgb-text-dim) / 0.1) 25%,
+      rgb(var(--rgb-text-dim) / 0.2) 50%,
+      rgb(var(--rgb-text-dim) / 0.1) 75%
+    )
+    0 0 / 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+
+  &.is-overview {
+    min-height: 18rem;
+  }
+
+  &.is-glance {
+    min-height: 12rem;
+  }
+
+  &.is-tile {
+    min-height: 6.5rem;
+  }
+}
+
+.skeleton-line {
+  border-radius: 8px;
+  height: 1rem;
+
+  &.is-sub {
+    width: min(20rem, 100%);
+    margin-top: 0.5rem;
+  }
+
+  &.is-notice {
+    height: 2.6rem;
+    border-radius: 12px;
+  }
+
+  &.is-heading {
+    width: 8rem;
+    height: 1.5rem;
+  }
+}
+
+@keyframes skeleton-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}

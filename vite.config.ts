@@ -1,5 +1,4 @@
 import { defineConfig, type Plugin } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
@@ -10,8 +9,8 @@ import {
   ORIGIN,
   pageMeta,
   sitemapPaths
-} from './src/app/routing/page-meta';
-import { routes } from './src/lib/spa/router/routes';
+} from './src/app/routing/page-meta.ts';
+import { routes } from './src/lib/spa/router/routes.ts';
 
 // The dev server injects CSS as style elements, which the Content Security
 // Policy in index.html refuses. Allow them while serving only; the build keeps
@@ -93,10 +92,6 @@ const writeRoutePages = (): Plugin => {
 };
 
 export default defineConfig({
-  plugins: [
-    tsconfigPaths(),
-    allowDevStyles(),
-    pageMetaTags(),
-    writeRoutePages()
-  ]
+  resolve: { tsconfigPaths: true },
+  plugins: [allowDevStyles(), pageMetaTags(), writeRoutePages()]
 });

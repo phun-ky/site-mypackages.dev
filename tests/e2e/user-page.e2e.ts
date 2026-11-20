@@ -329,3 +329,31 @@ test.describe('only the packages', () => {
     expect(scroll).toBeLessThanOrEqual(inner);
   });
 });
+
+// The layout shows while npm is fetched, instead of a blank loader
+test('shows a skeleton with the name while the packages load', async ({
+  page
+}) => {
+  let release = () => {};
+
+  const held = new Promise<void>((resolve) => (release = resolve));
+
+  await page.route('**/functions/v1/npm-search-by-user-role', async (route) => {
+    await held;
+    await route.fallback();
+  });
+  // The visit before kept npm's answer
+  await page.evaluate(() => localStorage.clear());
+  await page.goto('/users/phun-ky');
+
+  const busy = page.locator('.user-page[aria-busy="true"]');
+
+  await expect(busy).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('phun-ky');
+  await expect(page.locator('#loader-container')).not.toHaveClass(/is-visible/);
+
+  release();
+
+  await expect(busy).toHaveCount(0);
+  await expect(page.locator('.user-total')).toBeVisible();
+});
