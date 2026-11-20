@@ -72,10 +72,20 @@ production project:
 - the Content Security Policy in `index.html` only allows the production
   Supabase host in `connect-src`.
 
-To work against a local Supabase (`supabase start`), serve the functions with
-`ALLOW_LOCAL_ORIGIN=true` in `supabase/functions/.env`
-(`supabase functions serve`), point `.env.local` at the local project, and add
-its URL to `connect-src` while you work. Don't commit that change.
+To work against a local Supabase (Docker):
+
+```sh
+supabase start
+echo 'ALLOW_LOCAL_ORIGIN=true' > supabase/functions/.env
+supabase status -o env | sed -n 's/^API_URL=/VITE_SUPABASE_URL=/p; s/^ANON_KEY=/VITE_SUPABASE_ANON_KEY=/p' | tr -d '"' > .env.local
+supabase functions serve --env-file supabase/functions/.env
+npm run dev
+```
+
+Open the site at `http://localhost:5173`, the one origin the local functions
+answer. The dev server adds the Supabase URL from `.env.local` to `connect-src`,
+so `index.html` stays as it is. npm's data comes from npm itself, which limits
+how much it answers without a token.
 
 The tests don't need Supabase: the end-to-end tests run against a build that
 answers every request with mocks.
