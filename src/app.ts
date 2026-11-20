@@ -106,6 +106,14 @@ const App = async (initialProps: Partial<PagePropsType>) => {
       throw error;
     }
   };
+  // Private pages fail without a session, so leave them out and let the auth
+  // guard redirect to sign in. The page's code loads while the account menu
+  // is made.
+  const page = requiresSignIn({ match, session }) ? null : loadPage();
+
+  // Its error is handled where it's awaited, below
+  page?.catch(() => {});
+
   const account = session ? await ProfileMenu(session) : '';
   // Every page is in the Nebula, refined design since #78: one header, with
   // the account menu for a signed-in user
@@ -116,14 +124,12 @@ const App = async (initialProps: Partial<PagePropsType>) => {
 
   let content = '';
 
-  // Private pages fail without a session, so leave them out and let the auth
-  // guard redirect to sign in
-  if (!requiresSignIn({ match, session })) {
-    const page = await loadPage();
+  if (page) {
     const skeleton = SKELETON[_pageId]?.(resolvedProps);
     const root = document.getElementById('app');
 
-    // Not when a newer navigation has taken over
+    // Before the page's code, whose styles it doesn't need. Not when a newer
+    // navigation has taken over
     if (skeleton && root && !signal.aborted) {
       updateNodes(root, shell(skeleton));
       document
@@ -131,7 +137,7 @@ const App = async (initialProps: Partial<PagePropsType>) => {
         ?.classList.remove('is-visible');
     }
 
-    content = await callPage(page, { props: resolvedProps, signal });
+    content = await callPage(await page, { props: resolvedProps, signal });
   }
 
   addOnAfterAppRender(createAuthGuard({ match, session }));
