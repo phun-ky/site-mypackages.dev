@@ -15,12 +15,23 @@ import { routes } from './src/lib/spa/router/routes.ts';
 // The dev server injects CSS as style elements, which the Content Security
 // Policy in index.html refuses. Allow them while serving only; the build keeps
 // the policy as written (#38).
-const allowDevStyles = (): Plugin => ({
-  name: 'allow-dev-styles',
-  apply: 'serve',
-  transformIndexHtml: (html) =>
-    html.replace("style-src 'self';", "style-src 'self' 'unsafe-inline';")
-});
+// It also lets the browser call the Supabase in .env.local, such as a local
+// one from `supabase start`, without editing connect-src.
+const devCsp = (): Plugin => {
+  let supabaseUrl = '';
+
+  return {
+    name: 'dev-csp',
+    apply: 'serve',
+    configResolved: (config) => {
+      supabaseUrl = config.env.VITE_SUPABASE_URL ?? '';
+    },
+    transformIndexHtml: (html) =>
+      html
+        .replace("style-src 'self';", "style-src 'self' 'unsafe-inline';")
+        .replace("connect-src 'self'", `connect-src 'self' ${supabaseUrl}`)
+  };
+};
 // The start page's title, description and link preview tags (#40). The
 // other pages get theirs in writeRoutePages.
 const pageMetaTags = (): Plugin => ({
@@ -93,5 +104,5 @@ const writeRoutePages = (): Plugin => {
 
 export default defineConfig({
   resolve: { tsconfigPaths: true },
-  plugins: [allowDevStyles(), pageMetaTags(), writeRoutePages()]
+  plugins: [devCsp(), pageMetaTags(), writeRoutePages()]
 });
