@@ -2,6 +2,8 @@ import { getInitialsForUser } from '../../components/page-section/Header/utils/g
 import type { PagePropsType } from '../../lib/spa/types';
 import { escapeHtml } from '../../utils/escape-html';
 
+import './styles/userLayout.css';
+
 const repeat = (n: number, markup: string) => markup.repeat(n);
 
 /**

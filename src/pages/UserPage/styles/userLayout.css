@@ -1,0 +1,203 @@
+/* The user page's layout, which its skeleton needs before the page's own
+   code and styles have loaded, so it ships with the app. Also used by the
+   pages that share the user page's design. */
+/* A wider column than the front page, for the table. Set on the app, so the
+   header, outside the page since issue 116, follows */
+.app:has(.user-page) {
+  --nebula-max: 80rem;
+}
+
+/* The site-wide rules for text, links, lists, tables and inputs are reset
+   here: they're for prose and the older pages. */
+.user-page {
+  color: rgb(var(--rgb-text));
+  font-family: var(--font-family-body);
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.6;
+
+  & :where(h1, h2, h3, p, ul, ol) {
+    margin: 0;
+    max-width: none;
+  }
+
+  & :where(li) {
+    max-width: none;
+    margin: 0;
+  }
+
+  & :where(a) {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  & :where(strong) {
+    color: rgb(var(--rgb-text-bright));
+  }
+
+  & h2 {
+    font: 600 1.25rem/1.25 var(--font-family-heading);
+    letter-spacing: -0.01em;
+    color: rgb(var(--rgb-text-bright));
+  }
+
+  & h3 {
+    font: 600 1rem/1.3 var(--font-family-heading);
+    color: rgb(var(--rgb-text-bright));
+  }
+
+  & .num {
+    font-variant-numeric: tabular-nums;
+  }
+
+  & .muted {
+    color: rgb(var(--rgb-text-dim));
+  }
+
+  & .is-up {
+    color: rgb(var(--rgb-up));
+  }
+
+  & .is-down {
+    color: rgb(var(--rgb-down));
+  }
+
+  & .is-flat {
+    color: rgb(var(--rgb-text-dim));
+  }
+
+  & [hidden] {
+    display: none !important;
+  }
+}
+
+.user-content {
+  max-width: var(--nebula-max);
+  margin: 0 auto;
+  padding: 0 var(--nebula-gutter) 4rem;
+}
+
+.user-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+  padding: 2rem 0 1.25rem;
+
+  & h1 {
+    font: 600 clamp(1.7rem, 3.5vw, 2.3rem) / 1.1 var(--font-family-heading);
+    letter-spacing: -0.02em;
+    color: rgb(var(--rgb-text-bright));
+  }
+}
+
+.user-avatar {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    rgb(var(--rgb-brand)),
+    rgb(var(--rgb-brand-2))
+  );
+  color: rgb(var(--rgb-on-brand));
+  font: 600 1.05rem var(--font-family-heading);
+}
+
+.user-section {
+  padding: 1.5rem 0;
+}
+
+.user-section-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: end;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.user-overview {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1.5rem 0;
+}
+
+.glance {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.pkg-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr));
+  gap: 0.75rem;
+  padding: 0;
+  list-style: none;
+  aspect-raio: 4/3;
+}
+
+/* The skeleton painted while the page loads: the same layout, in shimmering
+   blocks. The site-wide reduced-motion rule stops the shimmer */
+/* Inside the page, to win over .user-card's background */
+.user-page .skeleton {
+  display: block;
+  background: linear-gradient(
+      90deg,
+      rgb(var(--rgb-text-dim) / 0.1) 25%,
+      rgb(var(--rgb-text-dim) / 0.2) 50%,
+      rgb(var(--rgb-text-dim) / 0.1) 75%
+    )
+    0 0 / 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+
+  &.is-overview {
+    min-height: 18rem;
+  }
+
+  &.is-glance {
+    min-height: 12rem;
+  }
+
+  &.is-tile {
+    min-height: 6.5rem;
+  }
+}
+
+.skeleton-line {
+  border-radius: 8px;
+  height: 1rem;
+
+  &.is-sub {
+    width: min(20rem, 100%);
+    margin-top: 0.5rem;
+  }
+
+  &.is-notice {
+    height: 2.6rem;
+    border-radius: 12px;
+  }
+
+  &.is-heading {
+    width: 8rem;
+    height: 1.5rem;
+  }
+}
+
+@keyframes skeleton-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (max-width: 1000px) {
+  .user-overview,
+  .glance {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
