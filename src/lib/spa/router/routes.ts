@@ -1,4 +1,4 @@
-import type { Routes } from '../types';
+import type { Routes } from '../types/index.ts';
 
 // Route parameters are package names and npm usernames, which never contain
 // these characters. Leaving them out keeps markup in a crafted URL from
