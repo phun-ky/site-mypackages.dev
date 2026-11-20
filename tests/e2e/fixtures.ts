@@ -146,4 +146,6 @@ export const waitForApp = async (
     /is-visible/,
     { timeout }
   );
+  // A page's skeleton is up before its data; wait for the page itself
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout });
 };

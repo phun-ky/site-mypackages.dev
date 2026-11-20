@@ -20,6 +20,8 @@ import type { PageId } from './lib/spa/router/routes';
 import type { PagePropsType } from './lib/spa/types';
 import { getParams } from './lib/spa/utils/get-params';
 import { isReloadingForNewBuild } from './lib/spa/utils/reload-on-new-build';
+import { updateNodes } from './lib/spa/utils/update-nodes';
+import { UserPageSkeleton } from './pages/UserPage/skeleton';
 import { supabase } from './services/supabase';
 
 import './styles/app.css';
@@ -39,6 +41,11 @@ const SITE_HEADER: Partial<
   UserPage: { current: 'users' },
   UserPackagesPage: { current: 'users' },
   AboutPage: { current: 'about' }
+};
+// Pages that paint their layout while their data loads, instead of the
+// full-screen loader
+const SKELETON: Partial<Record<string, (props: PagePropsType) => string>> = {
+  UserPage: UserPageSkeleton
 };
 const App = async (initialProps: Partial<PagePropsType>) => {
   let _pageId: string;
@@ -99,11 +106,33 @@ const App = async (initialProps: Partial<PagePropsType>) => {
       throw error;
     }
   };
+  const account = session ? await ProfileMenu(session) : '';
+  // Every page is in the Nebula, refined design since #78: one header, with
+  // the account menu for a signed-in user
+  const shell = (children: string) =>
+    html`<a class="skip-link" id="skip-link" href="#main">Skip to content</a
+      >${SiteHeader({ session, ...SITE_HEADER[_pageId], account })}
+      ${Main({ children })} ${Footer({ page: _pageId })}`;
+
+  let content = '';
+
   // Private pages fail without a session, so leave them out and let the auth
   // guard redirect to sign in
-  const content = requiresSignIn({ match, session })
-    ? ''
-    : await callPage(await loadPage(), { props: resolvedProps, signal });
+  if (!requiresSignIn({ match, session })) {
+    const page = await loadPage();
+    const skeleton = SKELETON[_pageId]?.(resolvedProps);
+    const root = document.getElementById('app');
+
+    // Not when a newer navigation has taken over
+    if (skeleton && root && !signal.aborted) {
+      updateNodes(root, shell(skeleton));
+      document
+        .getElementById('loader-container')
+        ?.classList.remove('is-visible');
+    }
+
+    content = await callPage(page, { props: resolvedProps, signal });
+  }
 
   addOnAfterAppRender(createAuthGuard({ match, session }));
   addOnAfterAppRender(createReturnAfterSignIn({ session }));
@@ -115,16 +144,7 @@ const App = async (initialProps: Partial<PagePropsType>) => {
     document.getElementById('main')?.focus();
   });
 
-  // Every page is in the Nebula, refined design since #78: one header, with
-  // the account menu for a signed-in user
-  return html`<a class="skip-link" id="skip-link" href="#main"
-      >Skip to content</a
-    >${SiteHeader({
-      session,
-      ...SITE_HEADER[_pageId],
-      account: session ? await ProfileMenu(session) : ''
-    })}
-    ${Main({ children: content })} ${Footer({ page: _pageId })}`;
+  return shell(content);
 };
 
 export default App;
