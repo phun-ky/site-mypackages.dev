@@ -45,6 +45,10 @@ const USER_FUNCTIONS: Fn[] = [
   { name: "npm-search-by-user-role", body: byName("username"), npm: () => SEARCH },
 ];
 const npmAnswer = () => jsonResponse({ objects: [], total: 0 });
+const NPM_HOSTS = new Set(["registry.npmjs.org", "api.npmjs.org"]);
+/** Whether a request stubFetch saw, "METHOD url", went to npm */
+const asksNpm = (request: string) =>
+  NPM_HOSTS.has(new URL(request.slice(request.indexOf(" ") + 1)).hostname);
 
 Deno.test("isPackageName takes npm's names, old capitals too", () => {
   for (const name of ["@phun-ky/typeof", "JSONStream", "lodash.merge", "a-b_c~d"]) {
@@ -95,7 +99,7 @@ for (const [fns, bad, good] of [
           const res = await handler(post(fn.body(value)));
 
           assertEquals(res.status, 400, value);
-          assertEquals(fetch.requests.some((r) => r.includes("npmjs.org")), false);
+          assertEquals(fetch.requests.some(asksNpm), false);
         } finally {
           fetch.restore();
         }
@@ -185,9 +189,10 @@ for (const fn of PACKAGE_FUNCTIONS.slice(0, 4)) {
     try {
       const res = await handler(post(fn.body("speccer")));
       const text = await res.text();
+      const body = JSON.parse(text);
 
       assertEquals(text.includes("cdn says no"), false);
-      assertEquals(text.includes("npmjs.org"), false);
+      assertEquals(["body", "url"].filter((key) => key in body), []);
     } finally {
       fetch.restore();
     }
