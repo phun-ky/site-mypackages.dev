@@ -5,7 +5,8 @@
 // Usage: npm run images:og
 // Rendering uses Playwright's Chromium, the fonts installed through
 // Fontsource and the nebula from public/, so nothing is fetched from the
-// network, and Python with Pillow to make the PNGs small. Run it again when
+// network, and Python with Pillow, built with libimagequant (most system
+// packages are), to make the PNGs small. Run it again when
 // the design or the copy changes, and commit the PNGs.
 import { chromium } from '@playwright/test';
 
@@ -71,7 +72,7 @@ const bars = [
 ]
   .map(
     ([name, share]) =>
-      `<div class="bar"><span>${name}</span><i><b style="width:${share * 100}%"></b></i></div>`
+      `<div class="bar"><span>${name}</span><i><b style="width:${share * 100}%;--score:${share * 100}"></b></i></div>`
   )
   .join('');
 const page = (layout) => `<!doctype html>
@@ -79,7 +80,8 @@ const page = (layout) => `<!doctype html>
 @font-face { font-family: Inter; font-weight: 100 900; src: url(${file('node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2')}); }
 @font-face { font-family: Lexend; font-weight: 100 900; src: url(${file('node_modules/@fontsource-variable/lexend-deca/files/lexend-deca-latin-wght-normal.woff2')}); }
 :root { --canvas: rgb(6 10 22); --surface: rgb(15 23 42 / 0.82); --line: rgb(148 163 184 / 0.22);
-  --text: rgb(151 166 189); --bright: rgb(232 238 248); --brand: rgb(56 189 248); --brand-2: rgb(29 207 158); }
+  --text: rgb(151 166 189); --bright: rgb(232 238 248); --brand: rgb(56 189 248); --brand-2: rgb(29 207 158);
+  --success: rgb(16 185 129); --warning: rgb(245 158 11); --danger: rgb(248 81 73); }
 * { box-sizing: border-box; margin: 0; }
 html, body { width: 100%; height: 100%; }
 body { position: relative; overflow: hidden; color: var(--text); font-family: Inter, sans-serif;
@@ -108,7 +110,10 @@ p { position: absolute; line-height: 1.5; }
 .bars { flex: 1; display: grid; gap: 12px; }
 .bar { display: grid; grid-template-columns: 112px 1fr; align-items: center; gap: 12px; font-size: 15px; }
 .bar i { height: 8px; border-radius: 99px; background: rgb(148 163 184 / 0.18); overflow: hidden; }
-.bar b { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--brand), var(--brand-2)); }
+.bar b { display: block; height: 100%; border-radius: 99px;
+  /* As on the package page: red to amber up to 50, amber to green from 50 */
+  background: color-mix(in oklch, var(--success) clamp(0%, (var(--score) - 50) * 2%, 100%),
+    color-mix(in oklch, var(--warning) clamp(0%, var(--score) * 2%, 100%), var(--danger))); }
 /* wide: text left, panels right */
 .wide .brand { top: 56px; left: 64px; }
 .wide .kicker { top: 168px; left: 64px; }
@@ -175,7 +180,9 @@ try {
   rmSync(dir, { recursive: true, force: true });
 }
 
-// A palette of up to 256 colours keeps the artwork sharp and small
+// A palette of up to 256 colours keeps the artwork sharp and small.
+// libimagequant keeps small areas, like the health bars, in their own
+// colour; median cut gave them to the nebula and drew them grey
 execFileSync(
   'python3',
   [
@@ -183,7 +190,7 @@ execFileSync(
     `import sys
 from PIL import Image
 for path in sys.argv[1:]:
-    Image.open(path).convert('RGB').quantize(256, method=Image.Quantize.MEDIANCUT).save(path, optimize=True)`,
+    Image.open(path).convert('RGB').quantize(256, method=Image.Quantize.LIBIMAGEQUANT).save(path, optimize=True)`,
     ...written
   ],
   { stdio: 'inherit' }
