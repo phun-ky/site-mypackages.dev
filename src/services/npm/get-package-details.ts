@@ -46,8 +46,7 @@ export const getPackageDetails = async (
 
       if (!data?.ok) {
         const status = Number(data?.status ?? 0);
-        const url = String(data?.url ?? 'npm-package-details');
-        const rawBody = typeof data?.body === 'string' ? data.body : undefined;
+        const url = 'npm-package-details';
         const retryAfterSeconds =
           typeof data?.retryAfterSeconds === 'number'
             ? data.retryAfterSeconds
@@ -57,7 +56,6 @@ export const getPackageDetails = async (
           throw new HttpError(status, url, {
             kind: 'rate_limited',
             retryAfterSeconds,
-            body: rawBody,
             message: `Rate limited by npm${retryAfterSeconds ? `. Try again in ${retryAfterSeconds}s` : ''}.`
           });
         }
@@ -65,7 +63,7 @@ export const getPackageDetails = async (
         throw new HttpError(status || 0, url, {
           kind: status >= 500 ? 'upstream' : 'client',
           retryAfterSeconds,
-          message: rawBody ?? `Upstream error: ${status || 'unknown'}`
+          message: `Upstream error: ${status || 'unknown'}`
         });
       }
 

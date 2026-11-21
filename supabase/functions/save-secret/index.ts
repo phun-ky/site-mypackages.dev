@@ -69,11 +69,13 @@ Deno.serve(async (req) => {
   // Service role for DB writes
   const admin = createClient(supabaseUrl, serviceRoleKey);
 
-  // ✅ Create secret via public SECURITY DEFINER wrapper (NOT vault schema directly)
+  // A new name each time: Vault keeps names unique, so saving again under a
+  // label used to fail (#186). The upsert points the row at the new secret,
+  // and a trigger deletes the old one.
   const { data: secretData, error: vaultErr } = await admin.rpc(
     "create_vault_secret",
     {
-      p_name: `pat:${provider}:${user.id}:${label ?? "default"}`,
+      p_name: `pat:${provider}:${user.id}:${label ?? "default"}:${crypto.randomUUID()}`,
       p_secret: token,
       p_description: `User PAT for provider=${provider}, user=${user.id}, label=${label ?? "default"}`,
     }
@@ -99,7 +101,16 @@ Deno.serve(async (req) => {
   .select("id, provider, label, updated_at")
   .single();
 
-if (upsertErr) return failed("save-secret upsert", upsertErr);
+if (upsertErr) {
+  // No row points at the new secret, so it mustn't stay in Vault
+  const { error: cleanupErr } = await admin.rpc("delete_vault_secret", {
+    p_id: vault_secret_id,
+  });
+
+  if (cleanupErr) console.error("save-secret delete_vault_secret:", cleanupErr);
+
+  return failed("save-secret upsert", upsertErr);
+}
 
 return json({ ok: true, token: row }, 200);
 

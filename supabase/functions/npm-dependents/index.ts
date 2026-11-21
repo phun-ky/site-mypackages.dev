@@ -1,4 +1,5 @@
 import { readBody, responses } from "../_shared/http.ts";
+import { isPackageName, npmTokenFor } from "../_shared/npm.ts";
 
 import { npmDependents } from "./dependents.ts";
 
@@ -17,11 +18,16 @@ Deno.serve(async (req) => {
 
   const name = String(body.name ?? "").trim();
 
-  // npm's longest name
-  if (!name || name.length > 214) return bad("Missing or invalid name", 400);
+  if (!name) return bad("Missing name", 400);
+  if (!isPackageName(name)) return bad("Invalid package name", 400);
 
   try {
-    return json({ ok: true, dependents: await npmDependents(name) });
+    const npmToken = await npmTokenFor(req);
+
+    return json({
+      ok: true,
+      dependents: await npmDependents(name, undefined, npmToken),
+    });
   } catch (e) {
     return failed("npm-dependents", e, 502);
   }
