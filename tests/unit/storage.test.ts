@@ -8,6 +8,7 @@ import {
   trimPackument
 } from '../../src/services/npm/trim-packument';
 import type { NpmRegistryPackument } from '../../src/types';
+import { cachedAsync } from '../../src/utils/storage/cached-async';
 import {
   MAX_ENTRY_CHARS,
   ttlLocalStorage
@@ -77,6 +78,12 @@ describe('ttlLocalStorage', () => {
     assert.equal(ttlLocalStorage.get('npmdash:missing'), null);
     assert.deepEqual(storage.keys(), ['npmdash:not-object']);
 
+    storage.setItem(
+      'npmdash:no-value',
+      JSON.stringify({ exp: Date.now() + 1000 })
+    );
+    assert.equal(ttlLocalStorage.get('npmdash:no-value'), null);
+
     const circular: Record<string, unknown> = {};
 
     circular.self = circular;
@@ -113,6 +120,47 @@ describe('ttlLocalStorage', () => {
     ]);
   });
 
+  test("makes room on Firefox's quota error too", () => {
+    const setItem = storage.setItem;
+
+    storage.setItem('npmdash:expired', entry(Date.now() - 1, 9_000));
+    storage.setItem = (k, v) => {
+      try {
+        setItem(k, v);
+      } catch {
+        throw new DOMException('full', 'NS_ERROR_DOM_QUOTA_REACHED');
+      }
+    };
+
+    assert.equal(ttlLocalStorage.set('npmdash:new', 'x'.repeat(2000)), true);
+    assert.deepEqual(storage.keys(), ['npmdash:new']);
+  });
+
+  // When a browser blocks site data, every use of localStorage throws
+  test('works without storage the browser blocks', () => {
+    const blocked = () => {
+      throw new DOMException('blocked', 'SecurityError');
+    };
+
+    Object.defineProperty(globalThis, 'localStorage', {
+      value: {
+        get length() {
+          return blocked();
+        },
+        key: blocked,
+        getItem: blocked,
+        setItem: blocked,
+        removeItem: blocked
+      },
+      configurable: true
+    });
+
+    assert.equal(ttlLocalStorage.get('npmdash:a'), null);
+    assert.equal(ttlLocalStorage.set('npmdash:a', 1), false);
+    assert.doesNotThrow(() => ttlLocalStorage.del('npmdash:a'));
+    assert.doesNotThrow(() => ttlLocalStorage.sweep());
+  });
+
   test('gives up when nothing of its own is left to remove', () => {
     storage.setItem('sb-auth-token', 'x'.repeat(9_000));
 
@@ -127,6 +175,7 @@ describe('ttlLocalStorage', () => {
 
     storage.setItem('npmdash:expired', entry(Date.now() - 1));
     storage.setItem('npmdash:corrupt', '{');
+    storage.setItem('npmdash:null', 'null');
     storage.setItem('npmdash:huge', entry(later, MAX_ENTRY_CHARS));
     storage.setItem(
       'npmdash:tracked-packages:someone:maintainer',
@@ -144,6 +193,31 @@ describe('ttlLocalStorage', () => {
       'npmdash:tracked-packages:v2:someone',
       'prefers-color-scheme'
     ]);
+  });
+});
+
+describe('cachedAsync', () => {
+  beforeEach(() => install(10_000));
+
+  test('reads from localStorage before asking again', async () => {
+    let asked = 0;
+
+    const ask = async () => ++asked;
+
+    assert.equal(await cachedAsync(new Map(), 'n', undefined, ask), 1);
+    // A new page load: memory is empty, localStorage isn't
+    assert.equal(await cachedAsync(new Map(), 'n', undefined, ask), 1);
+    assert.equal(asked, 1);
+  });
+
+  test("doesn't keep a failed answer", async () => {
+    const memory = new Map();
+
+    await assert.rejects(
+      cachedAsync(memory, 'f', undefined, () => Promise.reject(new Error('x')))
+    );
+    assert.equal(memory.size, 0);
+    assert.equal(await cachedAsync(memory, 'f', undefined, async () => 2), 2);
   });
 });
 

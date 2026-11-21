@@ -124,6 +124,21 @@ describe('packageUsedBy', () => {
     assert.equal(requested.length, 2);
   });
 
+  test('stops asking when the caller aborts', async () => {
+    const signals: (AbortSignal | null | undefined)[] = [];
+
+    globalThis.fetch = (async (_url: string, init?: RequestInit) => {
+      signals.push(init?.signal);
+      init?.signal?.throwIfAborted();
+
+      return Response.json({});
+    }) as typeof fetch;
+
+    assert.equal(await packageUsedBy('left', AbortSignal.abort()), null);
+    assert.equal(signals.length, 2);
+    assert.ok(signals.every((signal) => signal?.aborted));
+  });
+
   test("is null when ecosyste.ms fails or doesn't know the package", async () => {
     respond(() => new Response('', { status: 404 }));
     assert.equal(await packageUsedBy('new-package'), null);

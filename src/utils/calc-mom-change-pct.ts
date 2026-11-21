@@ -3,8 +3,8 @@ export type IntervalPoint = { interval: string; downloads: number }; // adapt to
 export const calcMoMChangePct = (intervals?: IntervalPoint[]) => {
   if (!intervals || intervals.length < 2) return undefined;
 
-  const last = intervals[intervals.length - 1]?.downloads ?? 0;
-  const prev = intervals[intervals.length - 2]?.downloads ?? 0;
+  const last = intervals[intervals.length - 1].downloads;
+  const prev = intervals[intervals.length - 2].downloads;
 
   if (prev === 0) return last === 0 ? 0 : 100;
 

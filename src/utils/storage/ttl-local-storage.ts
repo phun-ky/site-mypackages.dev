@@ -75,8 +75,8 @@ export const ttlLocalStorage = {
 
       return parsed.v ?? null;
     } catch {
-      // corrupt entry
-      localStorage.removeItem(key);
+      // A corrupt entry, or storage the browser blocks
+      this.del(key);
 
       return null;
     }
