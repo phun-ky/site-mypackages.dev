@@ -37,9 +37,9 @@ export const packument = (
     'dist-tags': { latest: '1.0.0' },
     versions: {
       '1.0.0': {
+        dependencies: {},
         ...fields,
         version: '1.0.0',
-        dependencies: {},
         dist: { unpackedSize: 12_345 }
       }
     },

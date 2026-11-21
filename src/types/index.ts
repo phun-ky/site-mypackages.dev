@@ -94,4 +94,6 @@ export type ReleaseHealth = {
   hasTypes: boolean;
   /** Versions published in the 365 days before now */
   releasesLastYear: number;
+  /** What the latest version needs installed: its dependencies, peer and optional ones */
+  dependsOn: string[];
 };

@@ -271,6 +271,45 @@ test('shows the page to a signed-out visitor who may not read tracked packages',
   );
 });
 
+// #160: which of the user's own packages depend on each other, from the
+// manifests the page already loads
+test('says which of the packages use each other', async ({ page }) => {
+  const uses = { dependencies: { core: '^1.0.0', 'left-pad': '^1.0.0' } };
+
+  await mockPackages(page, {
+    core: {},
+    a: uses,
+    b: uses,
+    c: { peerDependencies: { core: '^1.0.0' } },
+    d: { optionalDependencies: { core: '^1.0.0' } }
+  });
+  await mockUser(page, 'deps', ['core', 'a', 'b', 'c', 'd']);
+  await page.goto('/users/deps');
+
+  const tile = (name: string) =>
+    page.locator('#packages-by-scope .pkg-tile').filter({
+      has: page.locator('.pkg-tile-name').getByRole('link', {
+        name,
+        exact: true
+      })
+    });
+  const usedBy = tile('core').locator('.pkg-deps');
+
+  await expect(usedBy).toHaveText('Used by a, b, c and 1 more');
+  await expect(usedBy.getByRole('link', { name: 'a' })).toHaveAttribute(
+    'href',
+    '/packages/a'
+  );
+  // left-pad isn't theirs
+  await expect(tile('a').locator('.pkg-deps')).toHaveText('Uses core');
+  await expect(tile('d').locator('.pkg-deps')).toHaveText('Uses core');
+
+  await page.getByRole('button', { name: 'Table' }).click();
+  await expect(
+    page.locator('#package-rows tr[data-name="core"] .pkg-deps')
+  ).toHaveText('Used by a, b, c and 1 more');
+});
+
 test('fits a phone without scrolling sideways', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
 
