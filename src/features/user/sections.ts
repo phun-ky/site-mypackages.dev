@@ -57,6 +57,23 @@ const link = (name: string, className = '') =>
   `<a href="/packages/${escapeAttr(name)}" data-link class="${className}">${escapeHtml(name)}</a>`;
 const flags = (pkg: PortfolioPackage) =>
   `${pkg.types ? '<span class="pkg-badge is-types" title="Ships TypeScript types">TS</span>' : ''}${pkg.deprecated ? '<span class="pkg-badge is-deprecated">Deprecated</span>' : ''}${pkg.dormant ? '<span class="pkg-badge is-dormant" title="No release in the last year">Dormant</span>' : ''}`;
+// Up to three names, linked, then how many more
+const someNames = (names: string[]) =>
+  `${names
+    .slice(0, 3)
+    .map((name) => link(name))
+    .join(', ')}${names.length > 3 ? ` and ${names.length - 3} more` : ''}`;
+/** Which of the user's own packages this one uses, and is used by (#160) */
+const ownDeps = (pkg: PortfolioPackage) => {
+  const parts = [
+    pkg.uses.length ? `Uses ${someNames(pkg.uses)}` : '',
+    pkg.usedBy.length ? `Used by ${someNames(pkg.usedBy)}` : ''
+  ].filter(Boolean);
+
+  return parts.length
+    ? `<span class="pkg-deps">${parts.join(' · ')}</span>`
+    : '';
+};
 
 export const pageHead = ({
   username,
@@ -174,7 +191,7 @@ const tile = (pkg: PortfolioPackage, now: number, month: string | null) =>
   `<li class="user-card pkg-tile">
   <span class="pkg-tile-name">${link(pkg.name)}</span><span class="pkg-tile-downloads num" title="${downloadsIn(month)}">${compact.format(pkg.monthly)}</span>
   <span class="pkg-tile-meta">${pkg.version ? `v${escapeHtml(pkg.version)} · ` : ''}${ago(pkg.lastPublishMs, now)} ${flags(pkg)}</span><span class="pkg-tile-change ${changeClass(pkg.change)}">${formatChange(pkg.change)}</span>
-  <span class="pkg-tile-spark">${sparkline(pkg.series, { label: `${pkg.name}, monthly downloads`, down: (pkg.change ?? 0) < 0 })}</span>
+  ${ownDeps(pkg)}<span class="pkg-tile-spark">${sparkline(pkg.series, { label: `${pkg.name}, monthly downloads`, down: (pkg.change ?? 0) < 0 })}</span>
 </li>`;
 const state = (pkg: PortfolioPackage) =>
   [
@@ -186,7 +203,7 @@ const state = (pkg: PortfolioPackage) =>
     .join(' ');
 const row = (pkg: PortfolioPackage, now: number) =>
   `<tr data-name="${escapeAttr(pkg.name.toLowerCase())}" data-keywords="${escapeAttr(pkg.keywords.join(' ').toLowerCase())}" data-state="${state(pkg)}" data-downloads="${pkg.monthly}" data-change="${pkg.change ?? ''}" data-last="${pkg.lastPublishMs ?? 0}" data-releases="${pkg.releasesLastYear}">
-  <td class="col-name">${link(pkg.name, 'pkg-name')}<span class="pkg-desc">${escapeHtml(pkg.description)}</span></td>
+  <td class="col-name">${link(pkg.name, 'pkg-name')}<span class="pkg-desc">${escapeHtml(pkg.description)}</span>${ownDeps(pkg)}</td>
   <td class="col-spark">${sparkline(pkg.series, { label: `${pkg.name}, monthly downloads`, down: (pkg.change ?? 0) < 0 })}</td>
   <td class="col-downloads num">${full.format(pkg.monthly)}</td>
   <td class="col-change num ${changeClass(pkg.change)}">${formatChange(pkg.change)}</td>

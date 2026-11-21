@@ -7,6 +7,8 @@ import { normalizeDeprecated } from '../../../utils/normalize-deprecated';
 import { getLatestVersionFromPackage } from '../packages/utils/get-latest-version-from-package';
 import { getPackageByVersion } from '../packages/utils/get-package-by-version';
 
+import { dependsOn } from './depends-on';
+
 export const computeReleaseHealth = (
   registryData: NpmRegistryPackument,
   { sampleSize = 8, now = Date.now() } = {}
@@ -23,7 +25,8 @@ export const computeReleaseHealth = (
       license: null,
       enginesNode: null,
       hasTypes: false,
-      releasesLastYear: 0
+      releasesLastYear: 0,
+      dependsOn: []
     };
   }
 
@@ -88,6 +91,7 @@ export const computeReleaseHealth = (
     enginesNode,
     hasTypes,
     releasesLastYear: versionTimes.filter((x) => (x.ms ?? 0) > now - YEAR_MS)
-      .length
+      .length,
+    dependsOn: dependsOn(latestMeta)
   };
 };

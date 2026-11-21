@@ -8,6 +8,8 @@ import {
   sumMonths
 } from '../../../utils/downloads';
 
+import { linkOwnPackages } from './link-own-packages';
+
 export type PortfolioPackage = {
   name: string;
   description: string;
@@ -30,6 +32,10 @@ export type PortfolioPackage = {
   deprecated: boolean;
   /** No release in the last year */
   dormant: boolean;
+  /** The user's own packages that this one depends on (#160) */
+  uses: string[];
+  /** The user's own packages that depend on this one (#160) */
+  usedBy: string[];
 };
 
 export type Portfolio = {
@@ -121,13 +127,18 @@ export const buildPortfolio = (
       releasesLastYear: health?.releasesLastYear ?? 0,
       types: health?.hasTypes ?? false,
       deprecated: health?.deprecated ?? false,
-      dormant: lastPublishMs === null || now - lastPublishMs > YEAR_MS
+      dormant: lastPublishMs === null || now - lastPublishMs > YEAR_MS,
+      uses: health?.dependsOn ?? [],
+      usedBy: []
     };
   });
 
   packages.sort(
     (a, b) => b.monthly - a.monthly || a.name.localeCompare(b.name)
   );
+
+  // After sorting, so `usedBy` lists the most downloaded first
+  linkOwnPackages(packages);
 
   const monthly = packages.reduce((sum, pkg) => sum + pkg.monthly, 0);
   const top = packages.slice(0, topCount);

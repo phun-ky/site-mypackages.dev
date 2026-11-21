@@ -293,6 +293,22 @@
   margin-top: auto;
 }
 
+/* Which of the user's own packages it uses, and is used by */
+.pkg-deps {
+  display: block;
+  grid-column: 1 / -1;
+  font-size: 0.78rem;
+  color: rgb(var(--rgb-text-dim));
+
+  a {
+    color: rgb(var(--rgb-text));
+
+    &:hover {
+      color: rgb(var(--rgb-brand));
+    }
+  }
+}
+
 .pkg-badge {
   display: inline-block;
   padding: 0 0.4rem;
