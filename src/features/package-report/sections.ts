@@ -259,7 +259,7 @@ export const usedBy = (d: ReportData) => {
     .join('');
   const all =
     u && u.packages > u.names.length
-      ? `<p class="report-how"><a href="${escapeAttr(usedByUrl(d.name))}" target="_blank" rel="noopener noreferrer">All of them on ecosyste.ms<span class="visually-hidden"> (opens in a new tab)</span></a></p>`
+      ? `<p class="report-how"><a href="${escapeAttr(usedByUrl(d.name))}" target="_blank" rel="noopener noreferrer">All of them on npm<span class="visually-hidden"> (opens in a new tab)</span></a></p>`
       : '';
 
   return `<section class="report-section" aria-labelledby="used-by-title">

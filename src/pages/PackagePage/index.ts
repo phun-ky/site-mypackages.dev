@@ -24,6 +24,7 @@ import type { PagePropsType } from '../../lib/spa/types';
 import { fetchRepoStats } from '../../services/git/fetch-repo-stats';
 import { isValidRepoUrl } from '../../services/git/is-valid-repo-url';
 import { getLastYearDownloadsResult } from '../../services/npm/get-last-year-downloads-result';
+import { getNpmDependents } from '../../services/npm/get-npm-dependents';
 import { resolvePackageDetails } from '../../services/npm/packages/resolve-package-details';
 import { getLatestVersionFromPackage } from '../../services/npm/packages/utils/get-latest-version-from-package';
 import { getPackageByVersion } from '../../services/npm/packages/utils/get-package-by-version';
@@ -36,7 +37,8 @@ import { packagePopularity } from '../../services/package/popularity';
 import { packageProvenance } from '../../services/package/provenance';
 import { packageQuality } from '../../services/package/quality';
 import { packageSecurity } from '../../services/package/security';
-import { packageUsedBy } from '../../services/package/used-by';
+import { packageUsedBy, withNpmCount } from '../../services/package/used-by';
+import { supabase } from '../../services/supabase';
 import { getShowProfilePictures } from '../../services/supabase/utils/profile-pictures';
 import type { NpmRepository } from '../../types';
 import { safeUrl } from '../../utils/escape-html';
@@ -69,6 +71,7 @@ export const PackagePage = async (
   // Started now, so it runs while the downloads, OSV and the repository are
   // fetched
   const dependents = packageUsedBy(details.name, signal);
+  const npmDependents = getNpmDependents(supabase, details.name, signal);
   const { releaseHealth, time } = details;
   const latestVersion = getLatestVersionFromPackage(details);
   const latestMeta = getPackageByVersion({
@@ -192,7 +195,7 @@ export const PackagePage = async (
     openIssues,
     stars,
     keywords: Array.isArray(details.keywords) ? details.keywords : [],
-    usedBy: await dependents
+    usedBy: withNpmCount(await dependents, await npmDependents)
   };
 
   return html`<div class="package-page nebula-page">

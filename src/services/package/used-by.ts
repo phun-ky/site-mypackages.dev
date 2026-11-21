@@ -1,8 +1,9 @@
 import { cachedAsync } from '../../utils/storage/cached-async';
 
 // Which packages depend on a package (#160), from ecosyste.ms: the counts for
-// the whole package, and the most downloaded dependents. deps.dev counts per
-// version, so a new release looks unused there.
+// the whole package, and the most downloaded dependents. ecosyste.ms hasn't
+// counted some packages' dependents, so npm's own count is used where it's
+// higher. deps.dev counts per version, so a new release looks unused there.
 
 export type UsedBy = {
   /** Packages on npm that depend on it */
@@ -20,9 +21,25 @@ const memCache = new Map<string, Promise<UsedBy> | UsedBy>();
 const count = (n: unknown) =>
   typeof n === 'number' && Number.isFinite(n) && n > 0 ? n : 0;
 
-/** All of them, on ecosyste.ms */
+/** All of them, on npm, which has them even when ecosyste.ms doesn't */
 export const usedByUrl = (name: string) =>
-  `https://packages.ecosyste.ms/registries/npmjs.org/packages/${encodeURIComponent(name)}/dependent_packages`;
+  `https://www.npmjs.com/package/${name.split('/').map(encodeURIComponent).join('/')}?activeTab=dependents`;
+
+/**
+ * npm's count where it's higher than ecosyste.ms's, or where ecosyste.ms
+ * couldn't be reached
+ */
+export const withNpmCount = (
+  usedBy: UsedBy | null,
+  npm: number | null
+): UsedBy | null =>
+  npm === null
+    ? usedBy
+    : {
+        packages: Math.max(usedBy?.packages ?? 0, npm),
+        repos: usedBy?.repos ?? 0,
+        names: usedBy?.names ?? []
+      };
 
 export const usedByFrom = (pkg: unknown, dependents: unknown): UsedBy => {
   const counts = (pkg ?? {}) as Record<string, unknown>;

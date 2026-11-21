@@ -35,6 +35,9 @@ verify_jwt = true
 [functions.list-secrets]
 verify_jwt = true
 
+[functions.npm-dependents]
+verify_jwt = true
+
 [functions.npm-downloads-last-month]
 verify_jwt = true
 
