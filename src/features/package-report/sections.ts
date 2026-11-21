@@ -123,13 +123,14 @@ export const verdictCard = (d: ReportData) => {
   }
 
   const rows = d.rows
-    .map(
-      (row) =>
-        `<li><span class="signal-name">${row.name}</span><span class="signal-bar" aria-hidden="true"><i style="width:${Math.round(row.scorePct)}%"></i></span><span class="signal-score">${Math.round(row.scorePct)}</span><span class="signal-reason">${escapeHtml(row.reason)}</span></li>`
-    )
+    .map((row) => {
+      const score = Math.round(row.scorePct);
+
+      return `<li><span class="signal-name">${row.name}</span><span class="signal-bar" aria-hidden="true"><i style="width:${score}%;--score:${score}"></i></span><span class="signal-score">${score}</span><span class="signal-reason">${escapeHtml(row.reason)}</span></li>`;
+    })
     .join('');
 
-  return `<section class="report-card report-verdict" aria-labelledby="verdict-title">
+  return `<section class="report-card report-verdict" aria-labelledby="verdict-title" style="--score:${Math.round(d.health.scorePct)}">
   ${ring(d.health.scorePct, { label: 'Package health' })}
   <div class="report-summary"><span class="report-label" aria-hidden="true">Package health</span><h2 id="verdict-title"><span class="visually-hidden">Package health: </span>${d.health.label}</h2><p>${escapeHtml(d.verdict)}</p></div>
   <ul class="signals" aria-label="What the score is made of">${rows}</ul>
