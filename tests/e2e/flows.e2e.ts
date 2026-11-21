@@ -3,6 +3,7 @@ import type { Page } from '@playwright/test';
 import {
   expect,
   mockJson,
+  mockSupabaseFunction,
   mockSupabaseTable,
   test,
   waitForApp
@@ -302,11 +303,28 @@ test.describe('used by', () => {
       section(page).getByRole('link', { name: '@phun-ky/speccer' })
     ).toHaveAttribute('href', '/packages/@phun-ky/speccer');
     await expect(
-      section(page).getByRole('link', { name: 'All of them on ecosyste.ms' })
+      section(page).getByRole('link', { name: 'All of them on npm' })
     ).toHaveAttribute(
       'href',
-      'https://packages.ecosyste.ms/registries/npmjs.org/packages/speccer/dependent_packages'
+      'https://www.npmjs.com/package/speccer?activeTab=dependents'
     );
+  });
+
+  // ecosyste.ms hadn't counted @phun-ky/typeof's 4 dependents
+  test("uses npm's count when ecosyste.ms has fewer", async ({ page }) => {
+    await mockSupabaseFunction(page, 'npm-dependents', {
+      ok: true,
+      dependents: 4
+    });
+    await page.goto('/packages/speccer');
+    await waitForApp(page);
+
+    await expect(section(page)).toContainText(
+      '4 packages on npm depend on it.'
+    );
+    await expect(
+      section(page).getByRole('link', { name: 'All of them on npm' })
+    ).toBeVisible();
   });
 
   test('says when no packages depend on it', async ({ page }) => {

@@ -4,7 +4,8 @@ import { afterEach, beforeEach, describe, test } from 'node:test';
 import {
   packageUsedBy,
   usedByFrom,
-  usedByUrl
+  usedByUrl,
+  withNpmCount
 } from '../../src/services/package/used-by';
 
 describe('usedByFrom', () => {
@@ -33,11 +34,36 @@ describe('usedByFrom', () => {
     );
   });
 
-  test('links to the full list with the name encoded', () => {
+  test("links to the full list on npm, with the scope's slash kept", () => {
     assert.equal(
       usedByUrl('@phun-ky/speccer'),
-      'https://packages.ecosyste.ms/registries/npmjs.org/packages/%40phun-ky%2Fspeccer/dependent_packages'
+      'https://www.npmjs.com/package/%40phun-ky/speccer?activeTab=dependents'
     );
+  });
+});
+
+describe('withNpmCount', () => {
+  const ecosystems = { packages: 2, repos: 3, names: ['a', 'b'] };
+
+  test("takes npm's count where it's higher, and keeps the rest", () => {
+    assert.deepEqual(withNpmCount(ecosystems, 4), {
+      ...ecosystems,
+      packages: 4
+    });
+    assert.deepEqual(withNpmCount(ecosystems, 1), ecosystems);
+  });
+
+  test("gives npm's count when ecosyste.ms couldn't be reached", () => {
+    assert.deepEqual(withNpmCount(null, 4), {
+      packages: 4,
+      repos: 0,
+      names: []
+    });
+  });
+
+  test("leaves it as it was without npm's count", () => {
+    assert.equal(withNpmCount(ecosystems, null), ecosystems);
+    assert.equal(withNpmCount(null, null), null);
   });
 });
 

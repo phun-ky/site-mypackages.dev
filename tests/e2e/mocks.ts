@@ -37,6 +37,10 @@ export const mockPackages = async (
   // Not registered; a test registers a project with its own route
   await mockJson(page, 'https://www.bestpractices.dev/projects.json*', []);
   // No dependents; a test adds some with its own route
+  await mockSupabaseFunction(page, 'npm-dependents', {
+    ok: true,
+    dependents: 0
+  });
   await mockJson(
     page,
     'https://packages.ecosyste.ms/api/v1/registries/npmjs.org/packages/*',
