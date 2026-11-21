@@ -1,7 +1,6 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
 import { downloadRange, rangePath } from "../_shared/download-range.ts";
 import { readBody, responses } from "../_shared/http.ts";
+import { fetchUpstream, isPackageName, npmTokenFor } from "../_shared/npm.ts";
 
 const NPM_REGISTRY_API = "https://api.npmjs.org";
 
@@ -13,72 +12,35 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return preflight();
   if (req.method !== "POST") return bad("Method not allowed", 405);
 
-  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-  const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
-  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-
-  // Optional auth
-  const authHeader =
-    req.headers.get("authorization") ?? req.headers.get("Authorization");
-
-  let name = "";
   const body = await readBody(req);
   if (!body) return bad("Invalid JSON body", 400);
 
-  name = String(body.name ?? "").trim();
+  const name = String(body.name ?? "").trim();
 
   if (!name) return bad("Missing name", 400);
-  if (name.length > 214) return bad("Invalid package name", 400); // npm max is 214
+  if (!isPackageName(name)) return bad("Invalid package name", 400);
 
-  // Optional: if logged in, fetch active npm token
-  let npmToken: string | null = null;
-
-  if (authHeader?.startsWith("Bearer ")) {
-    const userClient = createClient(supabaseUrl, anonKey, {
-      global: { headers: { Authorization: authHeader } },
-    });
-
-    const { data: { user }, error: userErr } = await userClient.auth.getUser();
-
-    if (!userErr && user) {
-      // With the service role, for the user verified above: signed-in users
-      // can't read stored tokens themselves
-      const admin = createClient(supabaseUrl, serviceRoleKey);
-      const { data, error } = await admin.rpc(
-        "get_provider_token_secret",
-        { p_user_id: user.id, p_provider: "npm" }
-      );
-
-      if (!error && typeof data === "string" && data.trim()) {
-        npmToken = data.trim();
-      }
-    }
-  }
-
-  // 12 complete months and this month so far, not npm's `last-year` (#93)
-  const url =
-    `${NPM_REGISTRY_API}/downloads/range/${rangePath(downloadRange(new Date()))}/` +
-    encodeURIComponent(name);
-
-  const headers: Record<string, string> = {
-    Accept: "application/json",
-  };
+  const npmToken = await npmTokenFor(req);
+  const headers: Record<string, string> = { Accept: "application/json" };
   if (npmToken) headers.Authorization = `Bearer ${npmToken}`;
 
-  const res = await fetch(url, { headers });
+  // 12 complete months and this month so far, not npm's `last-year` (#93)
+  const res = await fetchUpstream(
+    `${NPM_REGISTRY_API}/downloads/range/${rangePath(downloadRange(new Date()))}/` +
+      encodeURIComponent(name),
+    { headers },
+  ).catch(() => null);
 
-  // Forward retry-after if present (you use it)
-  const retryAfter = res.headers.get("retry-after");
-  const retryAfterSeconds = retryAfter ? Number(retryAfter) : undefined;
+  if (!res) return bad("Could not reach npm", 502, { status: 502 });
 
   if (!res.ok) {
-    const body = await res.text().catch(() => undefined);
+    await res.body?.cancel();
 
-    // Keep response structured so client can re-create HttpError cleanly
+    const retryAfterSeconds = Number(res.headers.get("retry-after") ?? NaN);
+
+    // No npm body or URL: the site needs only the status
     return bad(`Upstream error: ${res.status}`, 502, {
       status: res.status,
-      url,
-      body,
       retryAfterSeconds: Number.isFinite(retryAfterSeconds)
         ? retryAfterSeconds
         : undefined,
@@ -87,12 +49,5 @@ Deno.serve(async (req) => {
 
   const data = await res.json().catch(() => null);
 
-  return json(
-    {
-      ok: true,
-      data,
-      authed: Boolean(npmToken),
-    },
-    200
-  );
+  return json({ ok: true, data, authed: Boolean(npmToken) }, 200);
 });

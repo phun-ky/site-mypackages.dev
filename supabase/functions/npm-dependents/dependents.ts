@@ -2,6 +2,7 @@
 // place npm gives the number. ecosyste.ms, which the site also asks, hasn't
 // counted some packages' dependents. `fetch` is passed in, so tests can play
 // npm.
+import { fetchUpstream } from "../_shared/npm.ts";
 
 const NPM_SEARCH = "https://registry.npmjs.org/-/v1/search";
 
@@ -11,11 +12,17 @@ const NPM_SEARCH = "https://registry.npmjs.org/-/v1/search";
  */
 export const npmDependents = async (
   name: string,
-  fetchFn: typeof fetch = fetch,
+  fetchFn: typeof fetch = fetchUpstream,
+  npmToken: string | null = null,
 ): Promise<number | null> => {
   const res = await fetchFn(
     `${NPM_SEARCH}?text=${encodeURIComponent(name)}&size=10`,
-    { headers: { Accept: "application/json" } },
+    {
+      headers: {
+        Accept: "application/json",
+        ...(npmToken && { Authorization: `Bearer ${npmToken}` }),
+      },
+    },
   );
 
   if (!res.ok) throw new Error(`npm search: ${res.status}`);

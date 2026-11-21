@@ -58,7 +58,11 @@ export const createNpmClient = ({
     for (let attempt = 1; ; attempt++) {
       if (now() > deadline) throw new Error(`Out of time before ${url}`);
 
-      const res = await fetchFn(url, { headers: { Accept: "application/json" } });
+      // Gives up at the deadline, not only between requests
+      const res = await fetchFn(url, {
+        headers: { Accept: "application/json" },
+        signal: AbortSignal.timeout(Math.max(1, deadline - now())),
+      });
 
       if (res.ok) return await res.json();
 

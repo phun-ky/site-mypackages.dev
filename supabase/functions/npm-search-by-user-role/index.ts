@@ -1,6 +1,5 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
 import { readBody, responses } from "../_shared/http.ts";
+import { fetchUpstream, isNpmUsername, npmTokenFor } from "../_shared/npm.ts";
 
 import { clampSize, searchAll, SearchError } from "./search.ts";
 
@@ -12,50 +11,16 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return preflight();
   if (req.method !== "POST") return bad("Method not allowed", 405);
 
-  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-  const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
-  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-
-  // Optional auth
-  const authHeader =
-    req.headers.get("authorization") ?? req.headers.get("Authorization");
-
-  let username = "";
-  let size = 50;
-
   const body = await readBody(req);
   if (!body) return bad("Invalid JSON body", 400);
 
-  username = String(body.username ?? "").trim();
-  size = clampSize(body.size);
+  const username = String(body.username ?? "").trim();
+  const size = clampSize(body.size);
 
   if (!username) return bad("Missing username", 400);
-  if (username.length > 320) return bad("Username too long", 400);
+  if (!isNpmUsername(username)) return bad("Invalid username", 400);
 
-  // If logged in, try to get active npm token
-  let npmToken: string | null = null;
-
-  if (authHeader?.startsWith("Bearer ")) {
-    const userClient = createClient(supabaseUrl, anonKey, {
-      global: { headers: { Authorization: authHeader } },
-    });
-
-    const { data: { user }, error: userErr } = await userClient.auth.getUser();
-
-    if (!userErr && user) {
-      // With the service role, for the user verified above: signed-in users
-      // can't read stored tokens themselves
-      const admin = createClient(supabaseUrl, serviceRoleKey);
-      const { data, error } = await admin.rpc(
-        "get_provider_token_secret",
-        { p_user_id: user.id, p_provider: "npm" }
-      );
-
-      if (!error && typeof data === "string" && data.trim()) {
-        npmToken = data.trim();
-      }
-    }
-  }
+  const npmToken = await npmTokenFor(req);
 
   // Maintainers only: npm's `author:` matches whoever published the latest
   // version, which trusted publishing records as GitHub Actions (#95). A
@@ -72,7 +37,7 @@ Deno.serve(async (req) => {
   let data;
 
   try {
-    data = await searchAll(query, size, { headers });
+    data = await searchAll(query, size, { headers, fetch: fetchUpstream });
   } catch (e) {
     if (e instanceof SearchError) return bad(e.message, 502);
 

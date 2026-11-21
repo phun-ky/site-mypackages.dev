@@ -1,22 +1,12 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { readBody, responses } from "../_shared/http.ts";
+import { fetchUpstream, isPackageName } from "../_shared/npm.ts";
 
 const normalizePackageName = (raw: string) =>
   raw.trim().replace(/\s+/g, "").toLowerCase();
 
-// What npm accepts as a new package name, once lowercased: an optional scope,
-// then URL-safe characters (validate-npm-package-name)
-const PACKAGE_NAME =
-  /^(?:@[a-z0-9-*~][a-z0-9-*._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/;
-
 const NPM_REGISTRY = "https://registry.npmjs.org";
-
-async function existsNpmPackage(packageName: string, signal?: AbortSignal) {
-  const url = `${NPM_REGISTRY}/${encodeURIComponent(packageName)}`;
-  const res = await fetch(url, { signal });
-  return res.ok; // 200
-}
 
 Deno.serve(async (req) => {
   const { json, preflight, failed } = responses(req);
@@ -57,21 +47,18 @@ Deno.serve(async (req) => {
   if (!packageName) return bad("Package name is required", 400);
 
   if (packageName.length < 2) return bad("Package name looks too short", 400);
-  if (packageName.length > 214 || !PACKAGE_NAME.test(packageName)) {
-    return bad("Invalid package name", 400);
-  }
-
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 8000);
+  if (!isPackageName(packageName)) return bad("Invalid package name", 400);
 
   let exists = false;
   try {
-    exists = await existsNpmPackage(packageName, controller.signal);
+    const res = await fetchUpstream(
+      `${NPM_REGISTRY}/${encodeURIComponent(packageName)}`,
+    );
+
+    await res.body?.cancel();
+    exists = res.ok;
   } catch {
-    clearTimeout(timeout);
     return bad("Could not verify package right now. Try again.", 502);
-  } finally {
-    clearTimeout(timeout);
   }
 
   if (!exists) {

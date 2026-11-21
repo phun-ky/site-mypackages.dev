@@ -1,4 +1,9 @@
-import { assertEquals, assertStringIncludes } from "jsr:@std/assert@1";
+import {
+  assertEquals,
+  assertMatch,
+  assertNotEquals,
+  assertStringIncludes,
+} from "jsr:@std/assert@1";
 
 import {
   captureErrors,
@@ -52,6 +57,62 @@ Deno.test("save-secret: hides database errors", async () => {
 
     assertEquals(res.status, 500);
     assertEquals(body.includes("relation"), false);
+  } finally {
+    errors.restore();
+    fetch.restore();
+  }
+});
+
+// #186: Vault keeps secret names unique, so the same label every time failed
+Deno.test("save-secret: names each secret anew, so a label can be saved again", async () => {
+  const names: string[] = [];
+  const fetch = stubFetch({
+    ...signedIn,
+    [VAULT]: async (req) => {
+      names.push((await req.json()).p_name);
+
+      return jsonResponse("00000000-0000-4000-8000-0000000000a1");
+    },
+    [UPSERT]: () =>
+      jsonResponse({ id: "00000000-0000-4000-8000-0000000000b1", provider: "npm" }),
+  });
+
+  try {
+    for (let i = 0; i < 2; i++) {
+      const res = await handler(post(valid));
+
+      assertEquals(res.status, 200);
+      await res.body?.cancel();
+    }
+
+    assertEquals(names.length, 2);
+    assertNotEquals(names[0], names[1]);
+    assertMatch(names[0], /^pat:npm:00000000-0000-4000-8000-000000000001:default:[0-9a-f-]{36}$/);
+  } finally {
+    fetch.restore();
+  }
+});
+
+Deno.test("save-secret: deletes the new secret when the row can't be saved", async () => {
+  const deleted: unknown[] = [];
+  const fetch = stubFetch({
+    ...signedIn,
+    [VAULT]: () => jsonResponse("00000000-0000-4000-8000-0000000000a1"),
+    [UPSERT]: databaseError,
+    [`POST ${SUPABASE_URL}/rest/v1/rpc/delete_vault_secret`]: async (req) => {
+      deleted.push(await req.json());
+
+      return jsonResponse(null);
+    },
+  });
+  const errors = captureErrors();
+
+  try {
+    const res = await handler(post(valid));
+
+    assertEquals(res.status, 500);
+    await res.body?.cancel();
+    assertEquals(deleted, [{ p_id: "00000000-0000-4000-8000-0000000000a1" }]);
   } finally {
     errors.restore();
     fetch.restore();

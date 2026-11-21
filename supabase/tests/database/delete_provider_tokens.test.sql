@@ -4,7 +4,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(10);
+select plan(13);
 
 -- Two users with two npm tokens each, made as the owner, like save-secret
 -- does, and the first token of each active
@@ -111,6 +111,35 @@ select ok(
 select ok(
   not has_function_privilege('authenticated', 'public.delete_vault_secret_of_token()', 'execute'),
   'signed-in users cannot call the trigger function'
+);
+
+-- save-secret's cleanup when its upsert fails (#186)
+select ok(
+  not has_function_privilege('anon', 'public.delete_vault_secret(uuid)', 'execute')
+  and not has_function_privilege('authenticated', 'public.delete_vault_secret(uuid)', 'execute'),
+  'visitors and signed-in users cannot delete Vault secrets'
+);
+
+reset role;
+
+select vault.create_secret('left-behind', 'pat:npm:one:default:00000000-0000-4000-8000-0000000000ff');
+
+set local role service_role;
+
+select public.delete_vault_secret(
+  (select id from vault.secrets where name = 'pat:npm:one:default:00000000-0000-4000-8000-0000000000ff')
+);
+
+reset role;
+
+select ok(
+  not pg_temp.in_vault('pat:npm:one:default:00000000-0000-4000-8000-0000000000ff'),
+  'the service role deletes a secret no token points at'
+);
+
+select ok(
+  pg_temp.in_vault('project_url'),
+  'and only that one'
 );
 
 select * from finish();
