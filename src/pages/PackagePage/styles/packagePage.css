@@ -234,6 +234,25 @@
 }
 
 /* The verdict: the ring, one sentence, and every signal with its reason */
+/* A score from 0 to 100 in --score as a colour: red to amber up to 50,
+   amber to green from 50, blended in OKLCH so the middle stays bright */
+.report-verdict,
+.signal-bar i {
+  --score-colour: color-mix(
+    in oklch,
+    rgb(var(--rgb-success)) clamp(0%, (var(--score) - 50) * 2%, 100%),
+    color-mix(
+      in oklch,
+      rgb(var(--rgb-warning)) clamp(0%, var(--score) * 2%, 100%),
+      rgb(var(--rgb-danger))
+    )
+  );
+}
+
+.report-verdict .score-ring-value {
+  stroke: var(--score-colour);
+}
+
 .report-verdict {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
@@ -282,11 +301,7 @@
     display: block;
     height: 100%;
     border-radius: 999px;
-    background: linear-gradient(
-      90deg,
-      rgb(var(--rgb-brand)),
-      rgb(var(--rgb-brand-2))
-    );
+    background: var(--score-colour);
   }
 
   /* Forced colours drop backgrounds, which would empty the bar */
