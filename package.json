@@ -27,8 +27,8 @@
     "images:logo": "node scripts/logo/render.mjs",
     "images:og": "node scripts/og/render.mjs",
     "typecheck": "tsc",
-    "test:unit": "node --import tsx --enable-source-maps --test \"tests/unit/**/*.test.ts\"",
-    "test:coverage": "node --import tsx --enable-source-maps --experimental-test-coverage --test-coverage-include=\"src/**\" --test-coverage-lines=95 --test-coverage-branches=92 --test-coverage-functions=100 --test \"tests/unit/**/*.test.ts\"",
+    "test:unit": "node --import ./tests/unit/resolve.ts --test \"tests/unit/**/*.test.ts\"",
+    "test:coverage": "node --import ./tests/unit/resolve.ts --experimental-test-coverage --test-coverage-include=\"src/**\" --test-coverage-lines=99 --test-coverage-branches=95 --test-coverage-functions=100 --test \"tests/unit/**/*.test.ts\"",
     "pretest:e2e": "vite build --mode e2e",
     "test:e2e": "playwright test",
     "commit": "npx git-cz",
@@ -50,7 +50,6 @@
     "globals": "^17.14.0",
     "html-validate": "^11.19.0",
     "prettier": "3.9.10",
-    "tsx": "^4.23.15",
     "typescript": "~6.0.3",
     "vite": "^8.3.6"
   },

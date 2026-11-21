@@ -155,6 +155,28 @@ describe('packageBestPractices', () => {
     );
   });
 
+  test('stops asking when the caller aborts', async () => {
+    let signal: AbortSignal | null | undefined;
+
+    globalThis.fetch = (async (_url: string, init?: RequestInit) => {
+      signal = init?.signal;
+      signal?.throwIfAborted();
+
+      return Response.json([project('gold', 300)]);
+    }) as typeof fetch;
+
+    assert.equal(
+      (
+        await packageBestPractices(
+          'https://github.com/a/left',
+          AbortSignal.abort()
+        )
+      ).key,
+      'unknown'
+    );
+    assert.equal(signal?.aborted, true);
+  });
+
   test('is unknown without a repository, and asks nothing', async () => {
     respond(() => Response.json([]));
 

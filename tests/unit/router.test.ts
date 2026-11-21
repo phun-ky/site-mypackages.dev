@@ -5,6 +5,7 @@ import { describe, test } from 'node:test';
 
 import { routes } from '../../src/lib/spa/router/routes';
 import { getRouterMatch } from '../../src/lib/spa/router/utils/get-router-match';
+import { potentialMatchesMapper } from '../../src/lib/spa/router/utils/potential-matches-mapper';
 import { getParams } from '../../src/lib/spa/utils/get-params';
 
 // The router reads the path from `location`, as in the browser
@@ -67,5 +68,18 @@ describe('router', () => {
     ]) {
       assert.equal(matchPath(path).match.route.page, 'PageNotFoundPage', path);
     }
+  });
+
+  test('never matches a route without a regex, and has no params then', () => {
+    matchPath('/');
+
+    const match = potentialMatchesMapper({ name: 'No regex', path: '/' });
+
+    assert.equal(match.result, null);
+    assert.deepEqual(getParams(match), {});
+    assert.deepEqual(
+      getParams({ route: { name: 'No path' }, result: ['/users/a', 'a'] }),
+      {}
+    );
   });
 });

@@ -54,14 +54,11 @@ export const packagePopularity = (
 
   if (d < DOWNLOAD_COUNT_THRESHOLD) {
     // linear 0..33
-    scorePct =
-      (DOWNLOAD_COUNT_THRESHOLD as number) === 0
-        ? 0
-        : (d / DOWNLOAD_COUNT_THRESHOLD) * 33;
+    scorePct = (d / DOWNLOAD_COUNT_THRESHOLD) * 33;
     title = `Below ${DOWNLOAD_COUNT_THRESHOLD} monthly downloads`;
   } else if (d < DOWNLOAD_COUNT_UPPER_THRESHOLD) {
     // linear 33..66
-    const span = DOWNLOAD_COUNT_UPPER_THRESHOLD - DOWNLOAD_COUNT_THRESHOLD || 1;
+    const span = DOWNLOAD_COUNT_UPPER_THRESHOLD - DOWNLOAD_COUNT_THRESHOLD;
 
     scorePct = 33 + ((d - DOWNLOAD_COUNT_THRESHOLD) / span) * 33;
     title = `Between ${DOWNLOAD_COUNT_THRESHOLD} and ${DOWNLOAD_COUNT_UPPER_THRESHOLD} monthly downloads`;
@@ -70,8 +67,7 @@ export const packagePopularity = (
     // Choose a “cap” where you want it to feel ~near-max.
 
     const denom = log(cap) - log(DOWNLOAD_COUNT_UPPER_THRESHOLD);
-    const t =
-      denom <= 0 ? 1 : (log(d) - log(DOWNLOAD_COUNT_UPPER_THRESHOLD)) / denom;
+    const t = (log(d) - log(DOWNLOAD_COUNT_UPPER_THRESHOLD)) / denom;
 
     scorePct = 66 + clamp(t, 0, 1) * 34;
     title = `Above ${DOWNLOAD_COUNT_UPPER_THRESHOLD} monthly downloads`;

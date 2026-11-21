@@ -1,4 +1,3 @@
-import { isAbort } from '..';
 import { DAY_MS } from '../../constants/temporal';
 
 import { lsKey } from './ls-key';
@@ -20,8 +19,6 @@ export const fetchAndStore = async <T>(
     return value;
   } catch (e) {
     memCache.delete(key); // don't keep rejected promises
-
-    if (isAbort(e as Error)) throw e;
 
     throw e;
   }

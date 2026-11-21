@@ -88,6 +88,11 @@ describe('escapeAttr', () => {
       })
     );
   });
+
+  test('turns null and undefined into nothing', () => {
+    assert.equal(escapeAttr(null), '');
+    assert.equal(escapeAttr(undefined), '');
+  });
 });
 
 describe('safeUrl', () => {
