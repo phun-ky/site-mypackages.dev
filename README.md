@@ -137,8 +137,8 @@ The last jobs in [`ci.yml`](.github/workflows/ci.yml) deploy, once every check
 has passed, in this order:
 
 1. **Database migrations** in `supabase/migrations` are applied to the Supabase
-   project with `supabase db push`. Only new migrations are applied; the push
-   fails if the project has one that `supabase/migrations` doesn't.
+   project with `supabase db push --remote`. Only new migrations are applied;
+   the push fails if the project has one that `supabase/migrations` doesn't.
 2. **The edge functions** in `supabase/functions` are deployed.
 3. **The site** is built and published to GitHub Pages, with every static route
    written as its own page. Package and user pages are served from `404.html`
@@ -149,8 +149,8 @@ has passed, in this order:
 For a new Supabase project:
 
 1. Link it and apply the migrations: `supabase link --project-ref <ref>`, then
-   `supabase db push`. They create the tables, row level security, grants, and
-   the daily job for the front page's example.
+   `supabase db push --remote`. They create the tables, row level security,
+   grants, and the daily job for the front page's example.
 2. In Authentication, enable the GitHub provider, set the site URL to the site's
    origin, and allow the origin followed by `/` as a redirect URL.
 3. For the daily example: store the project URL and a secret in Vault
