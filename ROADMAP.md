@@ -51,7 +51,12 @@ Ideas that fit the site but have no date. Each would start with an issue.
 - **Saved and shareable searches.**
 - **Advisory details** on the package page, beyond the count of known
   vulnerabilities.
-- **Other registries**, such as GitHub Packages.
+- **Other registries**: first registries that speak npm's protocol, like GitHub
+  Packages, with the user's own token, then other ecosystems, like JSR,
+  crates.io and PyPI. A package is a named, versioned release in a registry, and
+  npm stays the default in every URL. The proposal, with the steps and what is
+  still to decide, is
+  [#192](https://github.com/phun-ky/site-mypackages.dev/issues/192).
 
 ## Not planned
 
