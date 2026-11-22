@@ -39,6 +39,44 @@ test.describe('about', () => {
   });
 });
 
+test.describe('how it works', () => {
+  test('is its own page, from the header on any page', async ({ page }) => {
+    await page.goto('/help/about');
+    await waitForApp(page);
+
+    const nav = page.getByRole('navigation', { name: 'Main' });
+
+    await nav.getByRole('link', { name: 'How it works' }).click();
+    await expect(page).toHaveURL('/help/how-it-works');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+      'How it works'
+    );
+    await expect(
+      nav.getByRole('link', { name: 'How it works' })
+    ).toHaveAttribute('aria-current', 'page');
+    await expect(
+      page.locator('.help-steps').getByRole('heading', { level: 2 })
+    ).toHaveText([
+      'Search',
+      'Sign in with GitHub',
+      'Add an npm token, if you like'
+    ]);
+    expect(
+      await page
+        .locator('.help-steps a')
+        .evaluateAll((links) => links.map((a) => a.getAttribute('href')))
+    ).toEqual(['/', '/dashboard', '/profile/secrets/new']);
+  });
+
+  test('is linked from the front page', async ({ page }) => {
+    await page.goto('/');
+    await waitForApp(page);
+
+    await page.getByRole('link', { name: 'More on how it works →' }).click();
+    await expect(page).toHaveURL('/help/how-it-works');
+  });
+});
+
 test.describe('questions and answers', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/help/faq');
@@ -178,10 +216,15 @@ test.describe('help', () => {
     );
   });
 
-  test('links to the FAQ, About and feedback', async ({ page }) => {
+  test('links to the FAQ, How it works, About and feedback', async ({
+    page
+  }) => {
     const cards = page.locator('.help-cards');
 
-    await expect(cards.getByRole('link')).toHaveCount(3);
+    await expect(cards.getByRole('link')).toHaveCount(4);
+    await expect(
+      cards.getByRole('link', { name: /How it works/ })
+    ).toHaveAttribute('href', '/help/how-it-works');
     await expect(
       cards.getByRole('link', { name: /Questions and answers/ })
     ).toHaveAttribute('href', '/help/faq');
