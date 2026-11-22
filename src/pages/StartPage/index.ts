@@ -1,8 +1,9 @@
 import { Link } from '../../components/actions/Link';
+import { STEPS } from '../../features/help/steps';
 import { attachEvents } from '../../features/start/events/attach-events';
 import { FrontpageSearchStatistics } from '../../features/start/frontpage-search-statistics';
 import { PortfolioExample } from '../../features/start/portfolio-example';
-import { addOnAfterAppRender, addOnClick } from '../../lib/spa';
+import { addOnClick } from '../../lib/spa';
 import type { PagePropsType } from '../../lib/spa/types';
 import { supabase } from '../../services/supabase';
 
@@ -44,20 +45,6 @@ const FEATURES = [
     icon: icon(
       '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>'
     )
-  }
-];
-const STEPS = [
-  {
-    title: 'Search',
-    text: 'Any package or npm user. Everything public works without an account.'
-  },
-  {
-    title: 'Sign in with GitHub',
-    text: 'Get a dashboard with the packages you track, and keep it between visits.'
-  },
-  {
-    title: 'Add an npm token, if you like',
-    text: "For complete data without rate limits. It's stored encrypted and only used by the server, never sent to your browser."
   }
 ];
 const IS = [
@@ -127,12 +114,6 @@ export const StartPage = async (
   const { session } = props;
 
   attachEvents(supabase, signal);
-  // Coming from "How it works" on another page
-  addOnAfterAppRender(() => {
-    if (window.location.hash === '#how') {
-      document.getElementById('how')?.scrollIntoView();
-    }
-  });
   // The closing call to action goes back to the search
   addOnClick('start-search', () => {
     const search = document.getElementById('query-term-to-use');
@@ -215,8 +196,11 @@ export const StartPage = async (
         </ul>
       </section>
 
-      <section class="start-section" id="how" aria-labelledby="how-title">
-        <div class="section-head"><h2 id="how-title">How it works</h2></div>
+      <section class="start-section" aria-labelledby="how-title">
+        <div class="section-head">
+          <h2 id="how-title">How it works</h2>
+          ${Link({ to: '/help/how-it-works', children: 'More on how it works →' })}
+        </div>
         <ol class="steps">
           ${STEPS.map(
             (s) =>

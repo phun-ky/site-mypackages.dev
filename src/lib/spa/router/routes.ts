@@ -109,6 +109,13 @@ export const routes = [
     public: true
   },
   {
+    path: '/help/how-it-works',
+    page: 'HowItWorksPage',
+    name: 'How it works',
+    regex: /^\/help\/how-it-works$/,
+    public: true
+  },
+  {
     path: '/help/feedback',
     page: 'FeedbackPage',
     name: 'Feedback',

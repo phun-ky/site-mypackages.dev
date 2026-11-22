@@ -106,7 +106,13 @@ for (const path of PAGES) {
 
       const nav = page.getByRole('navigation', { name: 'Footer' });
 
-      for (const name of ['Packages', 'Users', 'About', 'FAQ']) {
+      for (const name of [
+        'Packages',
+        'Users',
+        'How it works',
+        'About',
+        'FAQ'
+      ]) {
         await expect(nav.getByRole('link', { name })).toBeVisible();
       }
     });
