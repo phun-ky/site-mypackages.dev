@@ -172,18 +172,19 @@ jobs:
           persist-credentials: false
       - uses: supabase/setup-cli@689adcfb80d947100a1eab127289b97d1fb07b13 # v3.2.0
         with:
-          version: 2.120.0
-      # A local database only. Never --linked here: that is production.
+          version: 3.1.0
+      # A local database only: the CLI's default. Never --remote here: that is
+      # production.
       - name: Start a local database
         run: supabase db start
       - name: Apply the migrations to an empty database
-        run: supabase db reset --local
+        run: supabase db reset
       - name: Test what the anon key and users can do
-        run: supabase test db --local
+        run: supabase test db
       - name: Lint functions in the database
-        run: supabase db lint --local --fail-on error
+        run: supabase db lint --fail-on error
       - name: Check the security advisors
-        run: supabase db advisors --local --type security --fail-on error
+        run: supabase db advisors --type security --fail-on error
 
   # The status check to require for pull requests. Add new jobs to `needs`.
   check:
@@ -315,22 +316,24 @@ jobs:
           persist-credentials: false
       - uses: supabase/setup-cli@689adcfb80d947100a1eab127289b97d1fb07b13 # v3.2.0
         with:
-          version: 2.120.0
+          version: 3.1.0
       # Without a database password, the CLI logs in to the database with a
       # temporary role it gets with the access token, then works as postgres
       - name: Link the project
         run: supabase link --project-ref "$PROJECT_REF"
       # Applies only the migrations the project doesn't have yet, and fails
       # if the project has one that supabase/migrations doesn't. Never a reset.
+      # --remote is the linked project: without it, db push targets a local
+      # database. --yes answers the CLI's question, which fails unattended.
       - name: List the migrations to apply
-        run: supabase db push --dry-run
+        run: supabase db push --remote --dry-run
       - name: Apply the migrations
-        run: supabase db push --yes
+        run: supabase db push --remote --yes
       # Deploys every function in supabase/functions, with the settings in
-      # supabase/config.toml. No --prune: functions that only exist in the
-      # project are left alone.
+      # supabase/config.toml, to the linked project. No --prune: functions
+      # that only exist in the project are left alone.
       - name: Deploy the edge functions
-        run: supabase functions deploy --use-api --project-ref "$PROJECT_REF"
+        run: supabase functions deploy --use-api --yes
 
   # Pull requests show their failures, so only open an issue for main
   notify:
