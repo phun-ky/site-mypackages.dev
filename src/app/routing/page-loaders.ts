@@ -65,6 +65,12 @@ export const pageLoaders = {
 
     return () => AboutPage();
   },
+  HowItWorksPage: async () => {
+    const { HowItWorksPage } =
+      await import('/pages/HelpPage/subpages/HowItWorksPage');
+
+    return () => HowItWorksPage();
+  },
   FeedbackPage: async () => {
     const { FeedbackPage } =
       await import('/pages/HelpPage/subpages/FeedbackPage');

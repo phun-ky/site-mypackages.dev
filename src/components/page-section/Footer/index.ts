@@ -22,6 +22,7 @@ export const Footer = ({ page }: FooterPropsType) =>
       <nav class="footer-nav" aria-label="Footer">
         ${Link({ to: '/packages', children: 'Packages' })}
         ${Link({ to: '/users', children: 'Users' })}
+        ${Link({ to: '/help/how-it-works', children: 'How it works' })}
         ${Link({ to: '/help/about', children: 'About' })}
         ${Link({ to: '/help/faq', children: 'FAQ' })}
         ${Link({ to: '/help/feedback', children: 'Feedback' })}

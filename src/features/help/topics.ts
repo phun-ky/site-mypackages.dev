@@ -3,10 +3,10 @@ import { FAQ_TOPICS, questionId } from './faq';
 // The FAQ's topics as navigation and search (#63), for the FAQ and the help
 // hub. Plain template strings, so Prettier never splits an end tag (#64).
 
-/** The FAQ's sidebar: About and Feedback, then every topic */
+/** The FAQ's sidebar: How it works, About and Feedback, then every topic */
 export const helpSidebar = () =>
   `<nav class="help-side" aria-label="Help">
-  <p class="help-group">About</p><ul><li><a href="/help/about" data-link>About My packages</a></li><li><a href="/help/feedback" data-link>Send feedback</a></li></ul>
+  <p class="help-group">About</p><ul><li><a href="/help/how-it-works" data-link>How it works</a></li><li><a href="/help/about" data-link>About My packages</a></li><li><a href="/help/feedback" data-link>Send feedback</a></li></ul>
   <p class="help-group">Questions and answers</p><ul>${FAQ_TOPICS.map((t) => `<li><a href="#${t.id}" data-topic="${t.id}">${t.title}</a></li>`).join('')}</ul>
 </nav>`;
 

@@ -74,6 +74,11 @@ const PAGES: Record<string, Entry> = {
     description:
       'What My packages is, who makes it, and where its numbers come from.'
   },
+  '/help/how-it-works': {
+    title: 'How it works',
+    description:
+      'Search any npm package or user, sign in with GitHub for a dashboard, and add an npm token for complete data.'
+  },
   '/help/faq': {
     title: 'Questions and answers',
     description:

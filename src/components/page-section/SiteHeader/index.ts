@@ -10,9 +10,7 @@ const html = String.raw;
 export type SiteHeaderPropsType = {
   session?: Session | null;
   /** The main section the page belongs to, marked in the nav */
-  current?: 'packages' | 'users' | 'about';
-  /** On the front page, "How it works" scrolls; elsewhere it goes there */
-  onStartPage?: boolean;
+  current?: 'packages' | 'users' | 'how' | 'about';
   /** The account menu for a signed-in user, rendered by ProfileMenu */
   account?: string;
 };
@@ -25,7 +23,6 @@ export type SiteHeaderPropsType = {
 export const SiteHeader = ({
   session,
   current,
-  onStartPage = false,
   account = ''
 }: SiteHeaderPropsType) => {
   let actions = Link({
@@ -60,7 +57,11 @@ export const SiteHeader = ({
         children: 'Users',
         ...(current === 'users' && { 'aria-current': 'page' })
       })}
-      ${Link({ to: onStartPage ? '#how' : '/#how', children: 'How it works' })}
+      ${Link({
+        to: '/help/how-it-works',
+        children: 'How it works',
+        ...(current === 'how' && { 'aria-current': 'page' })
+      })}
       ${Link({
         to: '/help/about',
         children: 'About',

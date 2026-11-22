@@ -9,7 +9,10 @@ const html = String.raw;
 const card = (to: string, title: string, text: string) =>
   `<li><a class="help-card help-link-card" href="${to}" data-link><h2>${title}</h2><p>${text}</p></a></li>`;
 
-/** The help hub (#63): search the FAQ, or go to About, the FAQ or Feedback. */
+/**
+ * The help hub (#63): search the FAQ, or go to the FAQ, How it works, About or
+ * Feedback.
+ */
 export const HelpPage = async () => {
   attachHelpSearchEvents();
 
@@ -50,6 +53,7 @@ export const HelpPage = async () => {
           'Questions and answers',
           `${answerCount()} answers in ${FAQ_TOPICS.length} topics`
         )}
+        ${card('/help/how-it-works', 'How it works', 'Search, sign in, and add an npm token')}
         ${card('/help/about', 'About', 'Where the data comes from, and who makes it')}
         ${card('/help/feedback', 'Feedback', 'Something off or missing? Say so')}
       </ul>

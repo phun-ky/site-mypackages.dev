@@ -35,13 +35,13 @@ const html = String.raw;
 const SITE_HEADER: Partial<
   Record<string, Omit<SiteHeaderPropsType, 'session'>>
 > = {
-  StartPage: { onStartPage: true },
   PackagesPage: { current: 'packages' },
   PackagePage: { current: 'packages' },
   UsersPage: { current: 'users' },
   UserPage: { current: 'users' },
   UserPackagesPage: { current: 'users' },
-  AboutPage: { current: 'about' }
+  AboutPage: { current: 'about' },
+  HowItWorksPage: { current: 'how' }
 };
 // Pages that paint their layout while their data loads, instead of the
 // full-screen loader
