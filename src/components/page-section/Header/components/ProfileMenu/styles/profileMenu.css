@@ -123,6 +123,12 @@
     &:hover {
       background-color: rgb(var(--rgb-brand) / 0.05);
     }
+    /* GitHub's pictures are 460 px: fill the button, not show their middle */
+    & img.avatar {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
     & * {
       user-select: none;
       pointer-events: none;
