@@ -66,7 +66,7 @@ const renderResults = () => {
   const words = input.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
 
   if (!words.length) {
-    results.innerHTML = '';
+    results.replaceChildren();
     results.hidden = true;
 
     return;

@@ -170,8 +170,7 @@ export const mountEnsuredPackages = async (
   // 1) Load and render existing ensured packages into .package-entries
   const existing = await fetchEnsuredPackages(signal);
 
-  list.innerHTML = '';
-  for (const row of existing) list.appendChild(renderExistingRow(row));
+  list.replaceChildren(...existing.map(renderExistingRow));
 
   // 2) Event delegation (register/remove)
   form.addEventListener('click', async (e) => {
