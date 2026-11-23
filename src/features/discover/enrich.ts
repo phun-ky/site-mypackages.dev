@@ -91,7 +91,7 @@ export const getUserInfo = async (
         // Nothing found reads better as no numbers than as zeros
         if (!res.total) return;
 
-        const byDownloads = [...res.objects].sort(
+        const byDownloads = res.objects.toSorted(
           (a, b) => (b.downloads?.monthly ?? 0) - (a.downloads?.monthly ?? 0)
         );
 
