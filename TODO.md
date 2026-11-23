@@ -289,8 +289,9 @@ and each starts with an issue when it's picked up.
       [watchlists](ROADMAP.md#considered-not-scheduled)
 - [ ] Notes + tags: [watchlists](ROADMAP.md#considered-not-scheduled)
 - [ ] Alerts (threshold based): [alerts](ROADMAP.md#considered-not-scheduled)
-- [ ] Cross-registry sources (GitHub/Azure/JFrog/Sonatype):
-      [other registries](ROADMAP.md#considered-not-scheduled)
+- [ ] Cross-registry sources (GitHub/Azure/JFrog/Sonatype, then JSR, crates.io,
+      PyPI): [other registries](ROADMAP.md#considered-not-scheduled),
+      [#192](https://github.com/phun-ky/site-mypackages.dev/issues/192)
 - [ ] Better security scoring + advisory details (backend proxy + caching):
       [advisory details](ROADMAP.md#considered-not-scheduled)
 - [ ] Saved searches + shareable searches:

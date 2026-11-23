@@ -91,7 +91,7 @@ const NEXT = [
   ],
   [
     'More registries',
-    'GitHub Packages, Azure Artifacts, JFrog and Sonatype.',
+    'GitHub Packages and other npm registries, then JSR, crates.io and PyPI.',
     'Later'
   ]
 ];
